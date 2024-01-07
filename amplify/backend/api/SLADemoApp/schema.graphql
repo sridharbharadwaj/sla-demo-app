@@ -1,0 +1,62 @@
+type Mortgage @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  instrumentNo: String
+  registeredBy: String
+  registeredOn: AWSDate
+  titleType: String
+  titleVol: String
+  titleFol: String
+  lotNo: String
+  extent: String
+  propertyAddress: String
+  dateOfInstrument: AWSDate
+  covenantsAndConditions: String
+  priorEncumberances: String
+  borrowerWitness: String
+  mortgageeSign: String
+  mortgageeWitness: String
+  Borrower: Borrower @hasOne
+  Mortgagee: Mortgagee @hasOne
+  Mortgagor: Mortgagor @hasOne
+  mortgagorSign: String
+  mortgagorWitness: String
+  borrowerSign: String
+}
+
+type Mortgagee @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  coRegNo: String
+  name: String
+  citizenship: String
+  placeOfCorporation: String
+  address: String
+}
+
+type Borrower @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  coRegNo: String
+  name: String
+  citizenship: String
+  placeOfCorporation: String
+  address: String
+}
+
+type Mortgagor @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  coRegNo: String
+  name: String
+  citizenship: String
+  placeOfCorporation: String
+  address: String
+}
+
+type LandTitle @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  titleType: String
+  titleVol: String
+  titleFol: String
+  lotNo: String
+  extent: String
+  propertyAddr: String
+}
+ 

@@ -1,0 +1,12 @@
+{
+  "resourceName": "s3slademos3",
+  "bucketName": "sla-demo-s3",
+  "policyUUID": "d68b6d52",
+  "storageAccess": "auth",
+  "guestAccess": [],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ]
+}

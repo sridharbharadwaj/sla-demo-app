@@ -1,0 +1,23 @@
+{
+  "staging": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-slademoapp-staging-25701-authRole",
+      "UnauthRoleArn": "arn:aws:iam::270051142968:role/amplify-slademoapp-staging-25701-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::270051142968:role/amplify-slademoapp-staging-25701-authRole",
+      "Region": "ap-southeast-1",
+      "DeploymentBucketName": "amplify-slademoapp-staging-25701-deployment",
+      "UnauthRoleName": "amplify-slademoapp-staging-25701-unauthRole",
+      "StackName": "amplify-slademoapp-staging-25701",
+      "StackId": "arn:aws:cloudformation:ap-southeast-1:270051142968:stack/amplify-slademoapp-staging-25701/9d4266f0-9fac-11ee-9cd6-0a97349165c6",
+      "AmplifyAppId": "d2oaut5cksq414"
+    },
+    "categories": {
+      "auth": {
+        "SLADemoApp": {}
+      },
+      "storage": {
+        "s3slademos3": {}
+      }
+    }
+  }
+}
