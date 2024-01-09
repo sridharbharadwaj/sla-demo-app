@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "paths": {
+    "/checkRule": {
+      "name": "/checkRule",
+      "lambdaFunction": "slademoRuleFunction",
+      "permissions": {
+        "setting": "open"
+      }
+    }
+  }
+}

@@ -30,6 +30,7 @@ type Mortgagee @model @auth(rules: [{allow: public}]) {
   citizenship: String
   placeOfCorporation: String
   address: String
+  nric: String!
 }
 
 type Borrower @model @auth(rules: [{allow: public}]) {
@@ -39,6 +40,7 @@ type Borrower @model @auth(rules: [{allow: public}]) {
   citizenship: String
   placeOfCorporation: String
   address: String
+  nric: String!
 }
 
 type Mortgagor @model @auth(rules: [{allow: public}]) {
@@ -48,6 +50,7 @@ type Mortgagor @model @auth(rules: [{allow: public}]) {
   citizenship: String
   placeOfCorporation: String
   address: String
+  nric: String!
 }
 
 type LandTitle @model @auth(rules: [{allow: public}]) {

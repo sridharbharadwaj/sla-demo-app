@@ -19,19 +19,15 @@ import {
   TextField,
   useTheme,
 } from "@aws-amplify/ui-react";
+import { fetchByPath, getOverrideProps, validateField } from "./utils";
+import { generateClient } from "aws-amplify/api";
 import {
-  Mortgage,
-  Borrower as Borrower0,
-  Mortgagee as Mortgagee0,
-  Mortgagor as Mortgagor0,
-} from "../models";
-import {
-  fetchByPath,
-  getOverrideProps,
-  useDataStoreBinding,
-  validateField,
-} from "./utils";
-import { DataStore } from "aws-amplify/datastore";
+  listBorrowers,
+  listMortgagees,
+  listMortgagors,
+} from "../graphql/queries";
+import { createMortgage } from "../graphql/mutations";
+const client = generateClient();
 function ArrayField({
   items = [],
   onChange,
@@ -262,13 +258,20 @@ export default function MortgageCreateForm(props) {
     initialValues.mortgageeWitness
   );
   const [Borrower, setBorrower] = React.useState(initialValues.Borrower);
+  const [BorrowerLoading, setBorrowerLoading] = React.useState(false);
+  const [borrowerRecords, setBorrowerRecords] = React.useState([]);
   const [Mortgagee, setMortgagee] = React.useState(initialValues.Mortgagee);
+  const [MortgageeLoading, setMortgageeLoading] = React.useState(false);
+  const [mortgageeRecords, setMortgageeRecords] = React.useState([]);
   const [Mortgagor, setMortgagor] = React.useState(initialValues.Mortgagor);
+  const [MortgagorLoading, setMortgagorLoading] = React.useState(false);
+  const [mortgagorRecords, setMortgagorRecords] = React.useState([]);
   const [lotNo, setLotNo] = React.useState(initialValues.lotNo);
   const [extent, setExtent] = React.useState(initialValues.extent);
   const [propertyAddress, setPropertyAddress] = React.useState(
     initialValues.propertyAddress
   );
+  const autocompleteLength = 10;
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
     setInstrumentNo(initialValues.instrumentNo);
@@ -335,18 +338,6 @@ export default function MortgageCreateForm(props) {
       ? Mortgagor.map((r) => getIDValue.Mortgagor?.(r))
       : getIDValue.Mortgagor?.(Mortgagor)
   );
-  const borrowerRecords = useDataStoreBinding({
-    type: "collection",
-    model: Borrower0,
-  }).items;
-  const mortgageeRecords = useDataStoreBinding({
-    type: "collection",
-    model: Mortgagee0,
-  }).items;
-  const mortgagorRecords = useDataStoreBinding({
-    type: "collection",
-    model: Mortgagor0,
-  }).items;
   const getDisplayValue = {
     Borrower: (r) => `${r?.coRegNo ? r?.coRegNo + " - " : ""}${r?.id}`,
     Mortgagee: (r) => `${r?.coRegNo ? r?.coRegNo + " - " : ""}${r?.id}`,
@@ -392,6 +383,98 @@ export default function MortgageCreateForm(props) {
     setErrors((errors) => ({ ...errors, [fieldName]: validationResponse }));
     return validationResponse;
   };
+  const fetchBorrowerRecords = async (value) => {
+    setBorrowerLoading(true);
+    const newOptions = [];
+    let newNext = "";
+    while (newOptions.length < autocompleteLength && newNext != null) {
+      const variables = {
+        limit: autocompleteLength * 5,
+        filter: {
+          or: [{ coRegNo: { contains: value } }, { id: { contains: value } }],
+        },
+      };
+      if (newNext) {
+        variables["nextToken"] = newNext;
+      }
+      const result = (
+        await client.graphql({
+          query: listBorrowers.replaceAll("__typename", ""),
+          variables,
+        })
+      )?.data?.listBorrowers?.items;
+      var loaded = result.filter(
+        (item) => !BorrowerIdSet.has(getIDValue.Borrower?.(item))
+      );
+      newOptions.push(...loaded);
+      newNext = result.nextToken;
+    }
+    setBorrowerRecords(newOptions.slice(0, autocompleteLength));
+    setBorrowerLoading(false);
+  };
+  const fetchMortgageeRecords = async (value) => {
+    setMortgageeLoading(true);
+    const newOptions = [];
+    let newNext = "";
+    while (newOptions.length < autocompleteLength && newNext != null) {
+      const variables = {
+        limit: autocompleteLength * 5,
+        filter: {
+          or: [{ coRegNo: { contains: value } }, { id: { contains: value } }],
+        },
+      };
+      if (newNext) {
+        variables["nextToken"] = newNext;
+      }
+      const result = (
+        await client.graphql({
+          query: listMortgagees.replaceAll("__typename", ""),
+          variables,
+        })
+      )?.data?.listMortgagees?.items;
+      var loaded = result.filter(
+        (item) => !MortgageeIdSet.has(getIDValue.Mortgagee?.(item))
+      );
+      newOptions.push(...loaded);
+      newNext = result.nextToken;
+    }
+    setMortgageeRecords(newOptions.slice(0, autocompleteLength));
+    setMortgageeLoading(false);
+  };
+  const fetchMortgagorRecords = async (value) => {
+    setMortgagorLoading(true);
+    const newOptions = [];
+    let newNext = "";
+    while (newOptions.length < autocompleteLength && newNext != null) {
+      const variables = {
+        limit: autocompleteLength * 5,
+        filter: {
+          or: [{ coRegNo: { contains: value } }, { id: { contains: value } }],
+        },
+      };
+      if (newNext) {
+        variables["nextToken"] = newNext;
+      }
+      const result = (
+        await client.graphql({
+          query: listMortgagors.replaceAll("__typename", ""),
+          variables,
+        })
+      )?.data?.listMortgagors?.items;
+      var loaded = result.filter(
+        (item) => !MortgagorIdSet.has(getIDValue.Mortgagor?.(item))
+      );
+      newOptions.push(...loaded);
+      newNext = result.nextToken;
+    }
+    setMortgagorRecords(newOptions.slice(0, autocompleteLength));
+    setMortgagorLoading(false);
+  };
+  React.useEffect(() => {
+    fetchBorrowerRecords("");
+    fetchMortgageeRecords("");
+    fetchMortgagorRecords("");
+  }, []);
   return (
     <Grid
       as="form"
@@ -459,7 +542,37 @@ export default function MortgageCreateForm(props) {
               modelFields[key] = null;
             }
           });
-          await DataStore.save(new Mortgage(modelFields));
+          const modelFieldsToSave = {
+            instrumentNo: modelFields.instrumentNo,
+            registeredBy: modelFields.registeredBy,
+            registeredOn: modelFields.registeredOn,
+            titleType: modelFields.titleType,
+            titleVol: modelFields.titleVol,
+            titleFol: modelFields.titleFol,
+            priorEncumberances: modelFields.priorEncumberances,
+            covenantsAndConditions: modelFields.covenantsAndConditions,
+            dateOfInstrument: modelFields.dateOfInstrument,
+            mortgagorSign: modelFields.mortgagorSign,
+            mortgagorWitness: modelFields.mortgagorWitness,
+            borrowerSign: modelFields.borrowerSign,
+            borrowerWitness: modelFields.borrowerWitness,
+            mortgageeSign: modelFields.mortgageeSign,
+            mortgageeWitness: modelFields.mortgageeWitness,
+            mortgageBorrowerId: modelFields?.Borrower?.id,
+            mortgageMortgageeId: modelFields?.Mortgagee?.id,
+            mortgageMortgagorId: modelFields?.Mortgagor?.id,
+            lotNo: modelFields.lotNo,
+            extent: modelFields.extent,
+            propertyAddress: modelFields.propertyAddress,
+          };
+          await client.graphql({
+            query: createMortgage.replaceAll("__typename", ""),
+            variables: {
+              input: {
+                ...modelFieldsToSave,
+              },
+            },
+          });
           if (onSuccess) {
             onSuccess(modelFields);
           }
@@ -468,7 +581,8 @@ export default function MortgageCreateForm(props) {
           }
         } catch (err) {
           if (onError) {
-            onError(modelFields, err.message);
+            const messages = err.errors.map((e) => e.message).join("\n");
+            onError(modelFields, messages);
           }
         }
       }}
@@ -1206,6 +1320,7 @@ export default function MortgageCreateForm(props) {
               id: getIDValue.Borrower?.(r),
               label: getDisplayValue.Borrower?.(r),
             }))}
+          isLoading={BorrowerLoading}
           onSelect={({ id, label }) => {
             setCurrentBorrowerValue(
               borrowerRecords.find((r) =>
@@ -1222,6 +1337,7 @@ export default function MortgageCreateForm(props) {
           }}
           onChange={(e) => {
             let { value } = e.target;
+            fetchBorrowerRecords(value);
             if (errors.Borrower?.hasError) {
               runValidationTasks("Borrower", value);
             }
@@ -1303,6 +1419,7 @@ export default function MortgageCreateForm(props) {
               id: getIDValue.Mortgagee?.(r),
               label: getDisplayValue.Mortgagee?.(r),
             }))}
+          isLoading={MortgageeLoading}
           onSelect={({ id, label }) => {
             setCurrentMortgageeValue(
               mortgageeRecords.find((r) =>
@@ -1319,6 +1436,7 @@ export default function MortgageCreateForm(props) {
           }}
           onChange={(e) => {
             let { value } = e.target;
+            fetchMortgageeRecords(value);
             if (errors.Mortgagee?.hasError) {
               runValidationTasks("Mortgagee", value);
             }
@@ -1400,6 +1518,7 @@ export default function MortgageCreateForm(props) {
               id: getIDValue.Mortgagor?.(r),
               label: getDisplayValue.Mortgagor?.(r),
             }))}
+          isLoading={MortgagorLoading}
           onSelect={({ id, label }) => {
             setCurrentMortgagorValue(
               mortgagorRecords.find((r) =>
@@ -1416,6 +1535,7 @@ export default function MortgageCreateForm(props) {
           }}
           onChange={(e) => {
             let { value } = e.target;
+            fetchMortgagorRecords(value);
             if (errors.Mortgagor?.hasError) {
               runValidationTasks("Mortgagor", value);
             }

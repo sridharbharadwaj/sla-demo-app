@@ -6,7 +6,6 @@
 
 import * as React from "react";
 import { AutocompleteProps, DividerProps, GridProps, HeadingProps, TextFieldProps } from "@aws-amplify/ui-react";
-import { Borrower as Borrower0, Mortgagee as Mortgagee0, Mortgagor as Mortgagor0 } from "../models";
 export declare type EscapeHatchProps = {
     [elementHierarchy: string]: Record<string, unknown>;
 } | null;
@@ -29,9 +28,9 @@ export declare type MortgageApplicationInputValues = {
     priorEncumberances?: string;
     covenantsAndConditions?: string;
     dateOfInstrument?: string;
-    Borrower?: Borrower0;
-    Mortgagee?: Mortgagee0;
-    Mortgagor?: Mortgagor0;
+    Borrower?: any;
+    Mortgagee?: any;
+    Mortgagor?: any;
     lotNo?: string;
     extent?: string;
     propertyAddress?: string;
@@ -43,9 +42,9 @@ export declare type MortgageApplicationValidationValues = {
     priorEncumberances?: ValidationFunction<string>;
     covenantsAndConditions?: ValidationFunction<string>;
     dateOfInstrument?: ValidationFunction<string>;
-    Borrower?: ValidationFunction<Borrower0>;
-    Mortgagee?: ValidationFunction<Mortgagee0>;
-    Mortgagor?: ValidationFunction<Mortgagor0>;
+    Borrower?: ValidationFunction<any>;
+    Mortgagee?: ValidationFunction<any>;
+    Mortgagor?: ValidationFunction<any>;
     lotNo?: ValidationFunction<string>;
     extent?: ValidationFunction<string>;
     propertyAddress?: ValidationFunction<string>;

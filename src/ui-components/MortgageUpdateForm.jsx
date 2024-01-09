@@ -13,7 +13,6 @@ import {
   Divider,
   Flex,
   Grid,
-  Heading,
   Icon,
   ScrollView,
   Text,
@@ -23,11 +22,12 @@ import {
 import { fetchByPath, getOverrideProps, validateField } from "./utils";
 import { generateClient } from "aws-amplify/api";
 import {
+  getMortgage,
   listBorrowers,
   listMortgagees,
   listMortgagors,
 } from "../graphql/queries";
-import { createMortgage } from "../graphql/mutations";
+import { updateMortgage } from "../graphql/mutations";
 const client = generateClient();
 function ArrayField({
   items = [],
@@ -184,9 +184,10 @@ function ArrayField({
     </React.Fragment>
   );
 }
-export default function MortgageApplication(props) {
+export default function MortgageUpdateForm(props) {
   const {
-    clearOnSuccess = true,
+    id: idProp,
+    mortgage: mortgageModelProp,
     onSuccess,
     onError,
     onSubmit,
@@ -196,30 +197,62 @@ export default function MortgageApplication(props) {
     ...rest
   } = props;
   const initialValues = {
+    instrumentNo: "",
+    registeredBy: "",
+    registeredOn: "",
     titleType: "",
     titleVol: "",
     titleFol: "",
-    priorEncumberances: "",
-    covenantsAndConditions: "",
-    dateOfInstrument: "",
-    Borrower: undefined,
-    Mortgagee: undefined,
-    Mortgagor: undefined,
     lotNo: "",
     extent: "",
     propertyAddress: "",
+    dateOfInstrument: "",
+    covenantsAndConditions: "",
+    priorEncumberances: "",
+    borrowerWitness: "",
+    mortgageeSign: "",
+    mortgageeWitness: "",
+    Borrower: undefined,
+    Mortgagee: undefined,
+    Mortgagor: undefined,
+    mortgagorSign: "",
+    mortgagorWitness: "",
+    borrowerSign: "",
   };
+  const [instrumentNo, setInstrumentNo] = React.useState(
+    initialValues.instrumentNo
+  );
+  const [registeredBy, setRegisteredBy] = React.useState(
+    initialValues.registeredBy
+  );
+  const [registeredOn, setRegisteredOn] = React.useState(
+    initialValues.registeredOn
+  );
   const [titleType, setTitleType] = React.useState(initialValues.titleType);
   const [titleVol, setTitleVol] = React.useState(initialValues.titleVol);
   const [titleFol, setTitleFol] = React.useState(initialValues.titleFol);
-  const [priorEncumberances, setPriorEncumberances] = React.useState(
-    initialValues.priorEncumberances
+  const [lotNo, setLotNo] = React.useState(initialValues.lotNo);
+  const [extent, setExtent] = React.useState(initialValues.extent);
+  const [propertyAddress, setPropertyAddress] = React.useState(
+    initialValues.propertyAddress
+  );
+  const [dateOfInstrument, setDateOfInstrument] = React.useState(
+    initialValues.dateOfInstrument
   );
   const [covenantsAndConditions, setCovenantsAndConditions] = React.useState(
     initialValues.covenantsAndConditions
   );
-  const [dateOfInstrument, setDateOfInstrument] = React.useState(
-    initialValues.dateOfInstrument
+  const [priorEncumberances, setPriorEncumberances] = React.useState(
+    initialValues.priorEncumberances
+  );
+  const [borrowerWitness, setBorrowerWitness] = React.useState(
+    initialValues.borrowerWitness
+  );
+  const [mortgageeSign, setMortgageeSign] = React.useState(
+    initialValues.mortgageeSign
+  );
+  const [mortgageeWitness, setMortgageeWitness] = React.useState(
+    initialValues.mortgageeWitness
   );
   const [Borrower, setBorrower] = React.useState(initialValues.Borrower);
   const [BorrowerLoading, setBorrowerLoading] = React.useState(false);
@@ -230,34 +263,77 @@ export default function MortgageApplication(props) {
   const [Mortgagor, setMortgagor] = React.useState(initialValues.Mortgagor);
   const [MortgagorLoading, setMortgagorLoading] = React.useState(false);
   const [mortgagorRecords, setMortgagorRecords] = React.useState([]);
-  const [lotNo, setLotNo] = React.useState(initialValues.lotNo);
-  const [extent, setExtent] = React.useState(initialValues.extent);
-  const [propertyAddress, setPropertyAddress] = React.useState(
-    initialValues.propertyAddress
+  const [mortgagorSign, setMortgagorSign] = React.useState(
+    initialValues.mortgagorSign
+  );
+  const [mortgagorWitness, setMortgagorWitness] = React.useState(
+    initialValues.mortgagorWitness
+  );
+  const [borrowerSign, setBorrowerSign] = React.useState(
+    initialValues.borrowerSign
   );
   const autocompleteLength = 10;
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
-    setTitleType(initialValues.titleType);
-    setTitleVol(initialValues.titleVol);
-    setTitleFol(initialValues.titleFol);
-    setPriorEncumberances(initialValues.priorEncumberances);
-    setCovenantsAndConditions(initialValues.covenantsAndConditions);
-    setDateOfInstrument(initialValues.dateOfInstrument);
-    setBorrower(initialValues.Borrower);
+    const cleanValues = mortgageRecord
+      ? { ...initialValues, ...mortgageRecord, Borrower, Mortgagee, Mortgagor }
+      : initialValues;
+    setInstrumentNo(cleanValues.instrumentNo);
+    setRegisteredBy(cleanValues.registeredBy);
+    setRegisteredOn(cleanValues.registeredOn);
+    setTitleType(cleanValues.titleType);
+    setTitleVol(cleanValues.titleVol);
+    setTitleFol(cleanValues.titleFol);
+    setLotNo(cleanValues.lotNo);
+    setExtent(cleanValues.extent);
+    setPropertyAddress(cleanValues.propertyAddress);
+    setDateOfInstrument(cleanValues.dateOfInstrument);
+    setCovenantsAndConditions(cleanValues.covenantsAndConditions);
+    setPriorEncumberances(cleanValues.priorEncumberances);
+    setBorrowerWitness(cleanValues.borrowerWitness);
+    setMortgageeSign(cleanValues.mortgageeSign);
+    setMortgageeWitness(cleanValues.mortgageeWitness);
+    setBorrower(cleanValues.Borrower);
     setCurrentBorrowerValue(undefined);
     setCurrentBorrowerDisplayValue("");
-    setMortgagee(initialValues.Mortgagee);
+    setMortgagee(cleanValues.Mortgagee);
     setCurrentMortgageeValue(undefined);
     setCurrentMortgageeDisplayValue("");
-    setMortgagor(initialValues.Mortgagor);
+    setMortgagor(cleanValues.Mortgagor);
     setCurrentMortgagorValue(undefined);
     setCurrentMortgagorDisplayValue("");
-    setLotNo(initialValues.lotNo);
-    setExtent(initialValues.extent);
-    setPropertyAddress(initialValues.propertyAddress);
+    setMortgagorSign(cleanValues.mortgagorSign);
+    setMortgagorWitness(cleanValues.mortgagorWitness);
+    setBorrowerSign(cleanValues.borrowerSign);
     setErrors({});
   };
+  const [mortgageRecord, setMortgageRecord] = React.useState(mortgageModelProp);
+  React.useEffect(() => {
+    const queryData = async () => {
+      const record = idProp
+        ? (
+            await client.graphql({
+              query: getMortgage.replaceAll("__typename", ""),
+              variables: { id: idProp },
+            })
+          )?.data?.getMortgage
+        : mortgageModelProp;
+      const BorrowerRecord = record ? await record.Borrower : undefined;
+      setBorrower(BorrowerRecord);
+      const MortgageeRecord = record ? await record.Mortgagee : undefined;
+      setMortgagee(MortgageeRecord);
+      const MortgagorRecord = record ? await record.Mortgagor : undefined;
+      setMortgagor(MortgagorRecord);
+      setMortgageRecord(record);
+    };
+    queryData();
+  }, [idProp, mortgageModelProp]);
+  React.useEffect(resetStateValues, [
+    mortgageRecord,
+    Borrower,
+    Mortgagee,
+    Mortgagor,
+  ]);
   const [currentBorrowerDisplayValue, setCurrentBorrowerDisplayValue] =
     React.useState("");
   const [currentBorrowerValue, setCurrentBorrowerValue] =
@@ -294,23 +370,32 @@ export default function MortgageApplication(props) {
       : getIDValue.Mortgagor?.(Mortgagor)
   );
   const getDisplayValue = {
-    Borrower: (r) => `${r?.id}${" - "}${r?.name}`,
-    Mortgagee: (r) => `${r?.id}${" - "}${r?.name}`,
-    Mortgagor: (r) => `${r?.id}${" - "}${r?.name}`,
+    Borrower: (r) => `${r?.coRegNo ? r?.coRegNo + " - " : ""}${r?.id}`,
+    Mortgagee: (r) => `${r?.coRegNo ? r?.coRegNo + " - " : ""}${r?.id}`,
+    Mortgagor: (r) => `${r?.coRegNo ? r?.coRegNo + " - " : ""}${r?.id}`,
   };
   const validations = {
+    instrumentNo: [],
+    registeredBy: [],
+    registeredOn: [],
     titleType: [],
     titleVol: [],
     titleFol: [],
-    priorEncumberances: [],
-    covenantsAndConditions: [],
-    dateOfInstrument: [],
-    Borrower: [],
-    Mortgagee: [],
-    Mortgagor: [],
     lotNo: [],
     extent: [],
     propertyAddress: [],
+    dateOfInstrument: [],
+    covenantsAndConditions: [],
+    priorEncumberances: [],
+    borrowerWitness: [],
+    mortgageeSign: [],
+    mortgageeWitness: [],
+    Borrower: [],
+    Mortgagee: [],
+    Mortgagor: [],
+    mortgagorSign: [],
+    mortgagorWitness: [],
+    borrowerSign: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -337,7 +422,7 @@ export default function MortgageApplication(props) {
       const variables = {
         limit: autocompleteLength * 5,
         filter: {
-          or: [{ id: { contains: value } }, { name: { contains: value } }],
+          or: [{ coRegNo: { contains: value } }, { id: { contains: value } }],
         },
       };
       if (newNext) {
@@ -366,7 +451,7 @@ export default function MortgageApplication(props) {
       const variables = {
         limit: autocompleteLength * 5,
         filter: {
-          or: [{ id: { contains: value } }, { name: { contains: value } }],
+          or: [{ coRegNo: { contains: value } }, { id: { contains: value } }],
         },
       };
       if (newNext) {
@@ -395,7 +480,7 @@ export default function MortgageApplication(props) {
       const variables = {
         limit: autocompleteLength * 5,
         filter: {
-          or: [{ id: { contains: value } }, { name: { contains: value } }],
+          or: [{ coRegNo: { contains: value } }, { id: { contains: value } }],
         },
       };
       if (newNext) {
@@ -430,18 +515,27 @@ export default function MortgageApplication(props) {
       onSubmit={async (event) => {
         event.preventDefault();
         let modelFields = {
-          titleType,
-          titleVol,
-          titleFol,
-          priorEncumberances,
-          covenantsAndConditions,
-          dateOfInstrument,
-          Borrower,
-          Mortgagee,
-          Mortgagor,
-          lotNo,
-          extent,
-          propertyAddress,
+          instrumentNo: instrumentNo ?? null,
+          registeredBy: registeredBy ?? null,
+          registeredOn: registeredOn ?? null,
+          titleType: titleType ?? null,
+          titleVol: titleVol ?? null,
+          titleFol: titleFol ?? null,
+          lotNo: lotNo ?? null,
+          extent: extent ?? null,
+          propertyAddress: propertyAddress ?? null,
+          dateOfInstrument: dateOfInstrument ?? null,
+          covenantsAndConditions: covenantsAndConditions ?? null,
+          priorEncumberances: priorEncumberances ?? null,
+          borrowerWitness: borrowerWitness ?? null,
+          mortgageeSign: mortgageeSign ?? null,
+          mortgageeWitness: mortgageeWitness ?? null,
+          Borrower: Borrower ?? null,
+          Mortgagee: Mortgagee ?? null,
+          Mortgagor: Mortgagor ?? null,
+          mortgagorSign: mortgagorSign ?? null,
+          mortgagorWitness: mortgagorWitness ?? null,
+          borrowerSign: borrowerSign ?? null,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -480,32 +574,39 @@ export default function MortgageApplication(props) {
             }
           });
           const modelFieldsToSave = {
-            titleType: modelFields.titleType,
-            titleVol: modelFields.titleVol,
-            titleFol: modelFields.titleFol,
-            priorEncumberances: modelFields.priorEncumberances,
-            covenantsAndConditions: modelFields.covenantsAndConditions,
-            dateOfInstrument: modelFields.dateOfInstrument,
-            mortgageBorrowerId: modelFields?.Borrower?.id,
-            mortgageMortgageeId: modelFields?.Mortgagee?.id,
-            mortgageMortgagorId: modelFields?.Mortgagor?.id,
-            lotNo: modelFields.lotNo,
-            extent: modelFields.extent,
-            propertyAddress: modelFields.propertyAddress,
+            instrumentNo: modelFields.instrumentNo ?? null,
+            registeredBy: modelFields.registeredBy ?? null,
+            registeredOn: modelFields.registeredOn ?? null,
+            titleType: modelFields.titleType ?? null,
+            titleVol: modelFields.titleVol ?? null,
+            titleFol: modelFields.titleFol ?? null,
+            lotNo: modelFields.lotNo ?? null,
+            extent: modelFields.extent ?? null,
+            propertyAddress: modelFields.propertyAddress ?? null,
+            dateOfInstrument: modelFields.dateOfInstrument ?? null,
+            covenantsAndConditions: modelFields.covenantsAndConditions ?? null,
+            priorEncumberances: modelFields.priorEncumberances ?? null,
+            borrowerWitness: modelFields.borrowerWitness ?? null,
+            mortgageeSign: modelFields.mortgageeSign ?? null,
+            mortgageeWitness: modelFields.mortgageeWitness ?? null,
+            mortgageBorrowerId: modelFields?.Borrower?.id ?? null,
+            mortgageMortgageeId: modelFields?.Mortgagee?.id ?? null,
+            mortgageMortgagorId: modelFields?.Mortgagor?.id ?? null,
+            mortgagorSign: modelFields.mortgagorSign ?? null,
+            mortgagorWitness: modelFields.mortgagorWitness ?? null,
+            borrowerSign: modelFields.borrowerSign ?? null,
           };
           await client.graphql({
-            query: createMortgage.replaceAll("__typename", ""),
+            query: updateMortgage.replaceAll("__typename", ""),
             variables: {
               input: {
+                id: mortgageRecord.id,
                 ...modelFieldsToSave,
               },
             },
           });
           if (onSuccess) {
             onSuccess(modelFields);
-          }
-          if (clearOnSuccess) {
-            resetStateValues();
           }
         } catch (err) {
           if (onError) {
@@ -514,39 +615,144 @@ export default function MortgageApplication(props) {
           }
         }
       }}
-      {...getOverrideProps(overrides, "MortgageApplication")}
+      {...getOverrideProps(overrides, "MortgageUpdateForm")}
       {...rest}
     >
-      <Heading
-        level={1}
-        children="Mortgage Application"
-        {...getOverrideProps(overrides, "SectionalElement0")}
-      ></Heading>
-      <Divider
-        orientation="horizontal"
-        {...getOverrideProps(overrides, "SectionalElement3")}
-      ></Divider>
-      <Heading
-        level={2}
-        children="The Land Titles Act"
-        {...getOverrideProps(overrides, "SectionalElement1")}
-      ></Heading>
-      <Heading
-        level={3}
-        children="Mortgage"
-        {...getOverrideProps(overrides, "SectionalElement2")}
-      ></Heading>
-      <Divider
-        orientation="horizontal"
-        {...getOverrideProps(overrides, "SectionalElement5")}
-      ></Divider>
-      <Heading
-        level={5}
-        children="Description of Land"
-        {...getOverrideProps(overrides, "SectionalElement4")}
-      ></Heading>
       <TextField
-        label="Title Type"
+        label="Instrument no"
+        isRequired={false}
+        isReadOnly={false}
+        value={instrumentNo}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              instrumentNo: value,
+              registeredBy,
+              registeredOn,
+              titleType,
+              titleVol,
+              titleFol,
+              lotNo,
+              extent,
+              propertyAddress,
+              dateOfInstrument,
+              covenantsAndConditions,
+              priorEncumberances,
+              borrowerWitness,
+              mortgageeSign,
+              mortgageeWitness,
+              Borrower,
+              Mortgagee,
+              Mortgagor,
+              mortgagorSign,
+              mortgagorWitness,
+              borrowerSign,
+            };
+            const result = onChange(modelFields);
+            value = result?.instrumentNo ?? value;
+          }
+          if (errors.instrumentNo?.hasError) {
+            runValidationTasks("instrumentNo", value);
+          }
+          setInstrumentNo(value);
+        }}
+        onBlur={() => runValidationTasks("instrumentNo", instrumentNo)}
+        errorMessage={errors.instrumentNo?.errorMessage}
+        hasError={errors.instrumentNo?.hasError}
+        {...getOverrideProps(overrides, "instrumentNo")}
+      ></TextField>
+      <TextField
+        label="Registered by"
+        isRequired={false}
+        isReadOnly={false}
+        value={registeredBy}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              instrumentNo,
+              registeredBy: value,
+              registeredOn,
+              titleType,
+              titleVol,
+              titleFol,
+              lotNo,
+              extent,
+              propertyAddress,
+              dateOfInstrument,
+              covenantsAndConditions,
+              priorEncumberances,
+              borrowerWitness,
+              mortgageeSign,
+              mortgageeWitness,
+              Borrower,
+              Mortgagee,
+              Mortgagor,
+              mortgagorSign,
+              mortgagorWitness,
+              borrowerSign,
+            };
+            const result = onChange(modelFields);
+            value = result?.registeredBy ?? value;
+          }
+          if (errors.registeredBy?.hasError) {
+            runValidationTasks("registeredBy", value);
+          }
+          setRegisteredBy(value);
+        }}
+        onBlur={() => runValidationTasks("registeredBy", registeredBy)}
+        errorMessage={errors.registeredBy?.errorMessage}
+        hasError={errors.registeredBy?.hasError}
+        {...getOverrideProps(overrides, "registeredBy")}
+      ></TextField>
+      <TextField
+        label="Registered on"
+        isRequired={false}
+        isReadOnly={false}
+        type="date"
+        value={registeredOn}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              instrumentNo,
+              registeredBy,
+              registeredOn: value,
+              titleType,
+              titleVol,
+              titleFol,
+              lotNo,
+              extent,
+              propertyAddress,
+              dateOfInstrument,
+              covenantsAndConditions,
+              priorEncumberances,
+              borrowerWitness,
+              mortgageeSign,
+              mortgageeWitness,
+              Borrower,
+              Mortgagee,
+              Mortgagor,
+              mortgagorSign,
+              mortgagorWitness,
+              borrowerSign,
+            };
+            const result = onChange(modelFields);
+            value = result?.registeredOn ?? value;
+          }
+          if (errors.registeredOn?.hasError) {
+            runValidationTasks("registeredOn", value);
+          }
+          setRegisteredOn(value);
+        }}
+        onBlur={() => runValidationTasks("registeredOn", registeredOn)}
+        errorMessage={errors.registeredOn?.errorMessage}
+        hasError={errors.registeredOn?.hasError}
+        {...getOverrideProps(overrides, "registeredOn")}
+      ></TextField>
+      <TextField
+        label="Title type"
         isRequired={false}
         isReadOnly={false}
         value={titleType}
@@ -554,18 +760,27 @@ export default function MortgageApplication(props) {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
+              instrumentNo,
+              registeredBy,
+              registeredOn,
               titleType: value,
               titleVol,
               titleFol,
-              priorEncumberances,
-              covenantsAndConditions,
-              dateOfInstrument,
-              Borrower,
-              Mortgagee,
-              Mortgagor,
               lotNo,
               extent,
               propertyAddress,
+              dateOfInstrument,
+              covenantsAndConditions,
+              priorEncumberances,
+              borrowerWitness,
+              mortgageeSign,
+              mortgageeWitness,
+              Borrower,
+              Mortgagee,
+              Mortgagor,
+              mortgagorSign,
+              mortgagorWitness,
+              borrowerSign,
             };
             const result = onChange(modelFields);
             value = result?.titleType ?? value;
@@ -581,7 +796,7 @@ export default function MortgageApplication(props) {
         {...getOverrideProps(overrides, "titleType")}
       ></TextField>
       <TextField
-        label="Title Vol"
+        label="Title vol"
         isRequired={false}
         isReadOnly={false}
         value={titleVol}
@@ -589,18 +804,27 @@ export default function MortgageApplication(props) {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
+              instrumentNo,
+              registeredBy,
+              registeredOn,
               titleType,
               titleVol: value,
               titleFol,
-              priorEncumberances,
-              covenantsAndConditions,
-              dateOfInstrument,
-              Borrower,
-              Mortgagee,
-              Mortgagor,
               lotNo,
               extent,
               propertyAddress,
+              dateOfInstrument,
+              covenantsAndConditions,
+              priorEncumberances,
+              borrowerWitness,
+              mortgageeSign,
+              mortgageeWitness,
+              Borrower,
+              Mortgagee,
+              Mortgagor,
+              mortgagorSign,
+              mortgagorWitness,
+              borrowerSign,
             };
             const result = onChange(modelFields);
             value = result?.titleVol ?? value;
@@ -616,7 +840,7 @@ export default function MortgageApplication(props) {
         {...getOverrideProps(overrides, "titleVol")}
       ></TextField>
       <TextField
-        label="Title Fol"
+        label="Title fol"
         isRequired={false}
         isReadOnly={false}
         value={titleFol}
@@ -624,18 +848,27 @@ export default function MortgageApplication(props) {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
+              instrumentNo,
+              registeredBy,
+              registeredOn,
               titleType,
               titleVol,
               titleFol: value,
-              priorEncumberances,
-              covenantsAndConditions,
-              dateOfInstrument,
-              Borrower,
-              Mortgagee,
-              Mortgagor,
               lotNo,
               extent,
               propertyAddress,
+              dateOfInstrument,
+              covenantsAndConditions,
+              priorEncumberances,
+              borrowerWitness,
+              mortgageeSign,
+              mortgageeWitness,
+              Borrower,
+              Mortgagee,
+              Mortgagor,
+              mortgagorSign,
+              mortgagorWitness,
+              borrowerSign,
             };
             const result = onChange(modelFields);
             value = result?.titleFol ?? value;
@@ -651,41 +884,181 @@ export default function MortgageApplication(props) {
         {...getOverrideProps(overrides, "titleFol")}
       ></TextField>
       <TextField
-        label="Prior encumberances"
+        label="Lot no"
         isRequired={false}
         isReadOnly={false}
-        value={priorEncumberances}
+        value={lotNo}
         onChange={(e) => {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
+              instrumentNo,
+              registeredBy,
+              registeredOn,
               titleType,
               titleVol,
               titleFol,
-              priorEncumberances: value,
-              covenantsAndConditions,
+              lotNo: value,
+              extent,
+              propertyAddress,
               dateOfInstrument,
+              covenantsAndConditions,
+              priorEncumberances,
+              borrowerWitness,
+              mortgageeSign,
+              mortgageeWitness,
               Borrower,
               Mortgagee,
               Mortgagor,
+              mortgagorSign,
+              mortgagorWitness,
+              borrowerSign,
+            };
+            const result = onChange(modelFields);
+            value = result?.lotNo ?? value;
+          }
+          if (errors.lotNo?.hasError) {
+            runValidationTasks("lotNo", value);
+          }
+          setLotNo(value);
+        }}
+        onBlur={() => runValidationTasks("lotNo", lotNo)}
+        errorMessage={errors.lotNo?.errorMessage}
+        hasError={errors.lotNo?.hasError}
+        {...getOverrideProps(overrides, "lotNo")}
+      ></TextField>
+      <TextField
+        label="Extent"
+        isRequired={false}
+        isReadOnly={false}
+        value={extent}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              instrumentNo,
+              registeredBy,
+              registeredOn,
+              titleType,
+              titleVol,
+              titleFol,
+              lotNo,
+              extent: value,
+              propertyAddress,
+              dateOfInstrument,
+              covenantsAndConditions,
+              priorEncumberances,
+              borrowerWitness,
+              mortgageeSign,
+              mortgageeWitness,
+              Borrower,
+              Mortgagee,
+              Mortgagor,
+              mortgagorSign,
+              mortgagorWitness,
+              borrowerSign,
+            };
+            const result = onChange(modelFields);
+            value = result?.extent ?? value;
+          }
+          if (errors.extent?.hasError) {
+            runValidationTasks("extent", value);
+          }
+          setExtent(value);
+        }}
+        onBlur={() => runValidationTasks("extent", extent)}
+        errorMessage={errors.extent?.errorMessage}
+        hasError={errors.extent?.hasError}
+        {...getOverrideProps(overrides, "extent")}
+      ></TextField>
+      <TextField
+        label="Property address"
+        isRequired={false}
+        isReadOnly={false}
+        value={propertyAddress}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              instrumentNo,
+              registeredBy,
+              registeredOn,
+              titleType,
+              titleVol,
+              titleFol,
+              lotNo,
+              extent,
+              propertyAddress: value,
+              dateOfInstrument,
+              covenantsAndConditions,
+              priorEncumberances,
+              borrowerWitness,
+              mortgageeSign,
+              mortgageeWitness,
+              Borrower,
+              Mortgagee,
+              Mortgagor,
+              mortgagorSign,
+              mortgagorWitness,
+              borrowerSign,
+            };
+            const result = onChange(modelFields);
+            value = result?.propertyAddress ?? value;
+          }
+          if (errors.propertyAddress?.hasError) {
+            runValidationTasks("propertyAddress", value);
+          }
+          setPropertyAddress(value);
+        }}
+        onBlur={() => runValidationTasks("propertyAddress", propertyAddress)}
+        errorMessage={errors.propertyAddress?.errorMessage}
+        hasError={errors.propertyAddress?.hasError}
+        {...getOverrideProps(overrides, "propertyAddress")}
+      ></TextField>
+      <TextField
+        label="Date of instrument"
+        isRequired={false}
+        isReadOnly={false}
+        type="date"
+        value={dateOfInstrument}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              instrumentNo,
+              registeredBy,
+              registeredOn,
+              titleType,
+              titleVol,
+              titleFol,
               lotNo,
               extent,
               propertyAddress,
+              dateOfInstrument: value,
+              covenantsAndConditions,
+              priorEncumberances,
+              borrowerWitness,
+              mortgageeSign,
+              mortgageeWitness,
+              Borrower,
+              Mortgagee,
+              Mortgagor,
+              mortgagorSign,
+              mortgagorWitness,
+              borrowerSign,
             };
             const result = onChange(modelFields);
-            value = result?.priorEncumberances ?? value;
+            value = result?.dateOfInstrument ?? value;
           }
-          if (errors.priorEncumberances?.hasError) {
-            runValidationTasks("priorEncumberances", value);
+          if (errors.dateOfInstrument?.hasError) {
+            runValidationTasks("dateOfInstrument", value);
           }
-          setPriorEncumberances(value);
+          setDateOfInstrument(value);
         }}
-        onBlur={() =>
-          runValidationTasks("priorEncumberances", priorEncumberances)
-        }
-        errorMessage={errors.priorEncumberances?.errorMessage}
-        hasError={errors.priorEncumberances?.hasError}
-        {...getOverrideProps(overrides, "priorEncumberances")}
+        onBlur={() => runValidationTasks("dateOfInstrument", dateOfInstrument)}
+        errorMessage={errors.dateOfInstrument?.errorMessage}
+        hasError={errors.dateOfInstrument?.hasError}
+        {...getOverrideProps(overrides, "dateOfInstrument")}
       ></TextField>
       <TextField
         label="Covenants and conditions"
@@ -696,18 +1069,27 @@ export default function MortgageApplication(props) {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
+              instrumentNo,
+              registeredBy,
+              registeredOn,
               titleType,
               titleVol,
               titleFol,
-              priorEncumberances,
-              covenantsAndConditions: value,
-              dateOfInstrument,
-              Borrower,
-              Mortgagee,
-              Mortgagor,
               lotNo,
               extent,
               propertyAddress,
+              dateOfInstrument,
+              covenantsAndConditions: value,
+              priorEncumberances,
+              borrowerWitness,
+              mortgageeSign,
+              mortgageeWitness,
+              Borrower,
+              Mortgagee,
+              Mortgagor,
+              mortgagorSign,
+              mortgagorWitness,
+              borrowerSign,
             };
             const result = onChange(modelFields);
             value = result?.covenantsAndConditions ?? value;
@@ -725,40 +1107,182 @@ export default function MortgageApplication(props) {
         {...getOverrideProps(overrides, "covenantsAndConditions")}
       ></TextField>
       <TextField
-        label="Date of instrument"
+        label="Prior encumberances"
         isRequired={false}
         isReadOnly={false}
-        type="date"
-        value={dateOfInstrument}
+        value={priorEncumberances}
         onChange={(e) => {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
+              instrumentNo,
+              registeredBy,
+              registeredOn,
               titleType,
               titleVol,
               titleFol,
-              priorEncumberances,
-              covenantsAndConditions,
-              dateOfInstrument: value,
-              Borrower,
-              Mortgagee,
-              Mortgagor,
               lotNo,
               extent,
               propertyAddress,
+              dateOfInstrument,
+              covenantsAndConditions,
+              priorEncumberances: value,
+              borrowerWitness,
+              mortgageeSign,
+              mortgageeWitness,
+              Borrower,
+              Mortgagee,
+              Mortgagor,
+              mortgagorSign,
+              mortgagorWitness,
+              borrowerSign,
             };
             const result = onChange(modelFields);
-            value = result?.dateOfInstrument ?? value;
+            value = result?.priorEncumberances ?? value;
           }
-          if (errors.dateOfInstrument?.hasError) {
-            runValidationTasks("dateOfInstrument", value);
+          if (errors.priorEncumberances?.hasError) {
+            runValidationTasks("priorEncumberances", value);
           }
-          setDateOfInstrument(value);
+          setPriorEncumberances(value);
         }}
-        onBlur={() => runValidationTasks("dateOfInstrument", dateOfInstrument)}
-        errorMessage={errors.dateOfInstrument?.errorMessage}
-        hasError={errors.dateOfInstrument?.hasError}
-        {...getOverrideProps(overrides, "dateOfInstrument")}
+        onBlur={() =>
+          runValidationTasks("priorEncumberances", priorEncumberances)
+        }
+        errorMessage={errors.priorEncumberances?.errorMessage}
+        hasError={errors.priorEncumberances?.hasError}
+        {...getOverrideProps(overrides, "priorEncumberances")}
+      ></TextField>
+      <TextField
+        label="Borrower witness"
+        isRequired={false}
+        isReadOnly={false}
+        value={borrowerWitness}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              instrumentNo,
+              registeredBy,
+              registeredOn,
+              titleType,
+              titleVol,
+              titleFol,
+              lotNo,
+              extent,
+              propertyAddress,
+              dateOfInstrument,
+              covenantsAndConditions,
+              priorEncumberances,
+              borrowerWitness: value,
+              mortgageeSign,
+              mortgageeWitness,
+              Borrower,
+              Mortgagee,
+              Mortgagor,
+              mortgagorSign,
+              mortgagorWitness,
+              borrowerSign,
+            };
+            const result = onChange(modelFields);
+            value = result?.borrowerWitness ?? value;
+          }
+          if (errors.borrowerWitness?.hasError) {
+            runValidationTasks("borrowerWitness", value);
+          }
+          setBorrowerWitness(value);
+        }}
+        onBlur={() => runValidationTasks("borrowerWitness", borrowerWitness)}
+        errorMessage={errors.borrowerWitness?.errorMessage}
+        hasError={errors.borrowerWitness?.hasError}
+        {...getOverrideProps(overrides, "borrowerWitness")}
+      ></TextField>
+      <TextField
+        label="Mortgagee sign"
+        isRequired={false}
+        isReadOnly={false}
+        value={mortgageeSign}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              instrumentNo,
+              registeredBy,
+              registeredOn,
+              titleType,
+              titleVol,
+              titleFol,
+              lotNo,
+              extent,
+              propertyAddress,
+              dateOfInstrument,
+              covenantsAndConditions,
+              priorEncumberances,
+              borrowerWitness,
+              mortgageeSign: value,
+              mortgageeWitness,
+              Borrower,
+              Mortgagee,
+              Mortgagor,
+              mortgagorSign,
+              mortgagorWitness,
+              borrowerSign,
+            };
+            const result = onChange(modelFields);
+            value = result?.mortgageeSign ?? value;
+          }
+          if (errors.mortgageeSign?.hasError) {
+            runValidationTasks("mortgageeSign", value);
+          }
+          setMortgageeSign(value);
+        }}
+        onBlur={() => runValidationTasks("mortgageeSign", mortgageeSign)}
+        errorMessage={errors.mortgageeSign?.errorMessage}
+        hasError={errors.mortgageeSign?.hasError}
+        {...getOverrideProps(overrides, "mortgageeSign")}
+      ></TextField>
+      <TextField
+        label="Mortgagee witness"
+        isRequired={false}
+        isReadOnly={false}
+        value={mortgageeWitness}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              instrumentNo,
+              registeredBy,
+              registeredOn,
+              titleType,
+              titleVol,
+              titleFol,
+              lotNo,
+              extent,
+              propertyAddress,
+              dateOfInstrument,
+              covenantsAndConditions,
+              priorEncumberances,
+              borrowerWitness,
+              mortgageeSign,
+              mortgageeWitness: value,
+              Borrower,
+              Mortgagee,
+              Mortgagor,
+              mortgagorSign,
+              mortgagorWitness,
+              borrowerSign,
+            };
+            const result = onChange(modelFields);
+            value = result?.mortgageeWitness ?? value;
+          }
+          if (errors.mortgageeWitness?.hasError) {
+            runValidationTasks("mortgageeWitness", value);
+          }
+          setMortgageeWitness(value);
+        }}
+        onBlur={() => runValidationTasks("mortgageeWitness", mortgageeWitness)}
+        errorMessage={errors.mortgageeWitness?.errorMessage}
+        hasError={errors.mortgageeWitness?.hasError}
+        {...getOverrideProps(overrides, "mortgageeWitness")}
       ></TextField>
       <ArrayField
         lengthLimit={1}
@@ -766,18 +1290,27 @@ export default function MortgageApplication(props) {
           let value = items[0];
           if (onChange) {
             const modelFields = {
+              instrumentNo,
+              registeredBy,
+              registeredOn,
               titleType,
               titleVol,
               titleFol,
-              priorEncumberances,
-              covenantsAndConditions,
-              dateOfInstrument,
-              Borrower: value,
-              Mortgagee,
-              Mortgagor,
               lotNo,
               extent,
               propertyAddress,
+              dateOfInstrument,
+              covenantsAndConditions,
+              priorEncumberances,
+              borrowerWitness,
+              mortgageeSign,
+              mortgageeWitness,
+              Borrower: value,
+              Mortgagee,
+              Mortgagor,
+              mortgagorSign,
+              mortgagorWitness,
+              borrowerSign,
             };
             const result = onChange(modelFields);
             value = result?.Borrower ?? value;
@@ -831,6 +1364,7 @@ export default function MortgageApplication(props) {
           onClear={() => {
             setCurrentBorrowerDisplayValue("");
           }}
+          defaultValue={Borrower}
           onChange={(e) => {
             let { value } = e.target;
             fetchBorrowerRecords(value);
@@ -856,18 +1390,27 @@ export default function MortgageApplication(props) {
           let value = items[0];
           if (onChange) {
             const modelFields = {
+              instrumentNo,
+              registeredBy,
+              registeredOn,
               titleType,
               titleVol,
               titleFol,
-              priorEncumberances,
-              covenantsAndConditions,
-              dateOfInstrument,
-              Borrower,
-              Mortgagee: value,
-              Mortgagor,
               lotNo,
               extent,
               propertyAddress,
+              dateOfInstrument,
+              covenantsAndConditions,
+              priorEncumberances,
+              borrowerWitness,
+              mortgageeSign,
+              mortgageeWitness,
+              Borrower,
+              Mortgagee: value,
+              Mortgagor,
+              mortgagorSign,
+              mortgagorWitness,
+              borrowerSign,
             };
             const result = onChange(modelFields);
             value = result?.Mortgagee ?? value;
@@ -921,6 +1464,7 @@ export default function MortgageApplication(props) {
           onClear={() => {
             setCurrentMortgageeDisplayValue("");
           }}
+          defaultValue={Mortgagee}
           onChange={(e) => {
             let { value } = e.target;
             fetchMortgageeRecords(value);
@@ -946,18 +1490,27 @@ export default function MortgageApplication(props) {
           let value = items[0];
           if (onChange) {
             const modelFields = {
+              instrumentNo,
+              registeredBy,
+              registeredOn,
               titleType,
               titleVol,
               titleFol,
-              priorEncumberances,
-              covenantsAndConditions,
-              dateOfInstrument,
-              Borrower,
-              Mortgagee,
-              Mortgagor: value,
               lotNo,
               extent,
               propertyAddress,
+              dateOfInstrument,
+              covenantsAndConditions,
+              priorEncumberances,
+              borrowerWitness,
+              mortgageeSign,
+              mortgageeWitness,
+              Borrower,
+              Mortgagee,
+              Mortgagor: value,
+              mortgagorSign,
+              mortgagorWitness,
+              borrowerSign,
             };
             const result = onChange(modelFields);
             value = result?.Mortgagor ?? value;
@@ -1011,6 +1564,7 @@ export default function MortgageApplication(props) {
           onClear={() => {
             setCurrentMortgagorDisplayValue("");
           }}
+          defaultValue={Mortgagor}
           onChange={(e) => {
             let { value } = e.target;
             fetchMortgagorRecords(value);
@@ -1031,122 +1585,150 @@ export default function MortgageApplication(props) {
         ></Autocomplete>
       </ArrayField>
       <TextField
-        label="Lot no"
+        label="Mortgagor sign"
         isRequired={false}
         isReadOnly={false}
-        value={lotNo}
+        value={mortgagorSign}
         onChange={(e) => {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
+              instrumentNo,
+              registeredBy,
+              registeredOn,
               titleType,
               titleVol,
               titleFol,
-              priorEncumberances,
-              covenantsAndConditions,
-              dateOfInstrument,
-              Borrower,
-              Mortgagee,
-              Mortgagor,
-              lotNo: value,
-              extent,
-              propertyAddress,
-            };
-            const result = onChange(modelFields);
-            value = result?.lotNo ?? value;
-          }
-          if (errors.lotNo?.hasError) {
-            runValidationTasks("lotNo", value);
-          }
-          setLotNo(value);
-        }}
-        onBlur={() => runValidationTasks("lotNo", lotNo)}
-        errorMessage={errors.lotNo?.errorMessage}
-        hasError={errors.lotNo?.hasError}
-        {...getOverrideProps(overrides, "lotNo")}
-      ></TextField>
-      <TextField
-        label="Extent"
-        isRequired={false}
-        isReadOnly={false}
-        value={extent}
-        onChange={(e) => {
-          let { value } = e.target;
-          if (onChange) {
-            const modelFields = {
-              titleType,
-              titleVol,
-              titleFol,
-              priorEncumberances,
-              covenantsAndConditions,
-              dateOfInstrument,
-              Borrower,
-              Mortgagee,
-              Mortgagor,
-              lotNo,
-              extent: value,
-              propertyAddress,
-            };
-            const result = onChange(modelFields);
-            value = result?.extent ?? value;
-          }
-          if (errors.extent?.hasError) {
-            runValidationTasks("extent", value);
-          }
-          setExtent(value);
-        }}
-        onBlur={() => runValidationTasks("extent", extent)}
-        errorMessage={errors.extent?.errorMessage}
-        hasError={errors.extent?.hasError}
-        {...getOverrideProps(overrides, "extent")}
-      ></TextField>
-      <TextField
-        label="Property address"
-        isRequired={false}
-        isReadOnly={false}
-        value={propertyAddress}
-        onChange={(e) => {
-          let { value } = e.target;
-          if (onChange) {
-            const modelFields = {
-              titleType,
-              titleVol,
-              titleFol,
-              priorEncumberances,
-              covenantsAndConditions,
-              dateOfInstrument,
-              Borrower,
-              Mortgagee,
-              Mortgagor,
               lotNo,
               extent,
-              propertyAddress: value,
+              propertyAddress,
+              dateOfInstrument,
+              covenantsAndConditions,
+              priorEncumberances,
+              borrowerWitness,
+              mortgageeSign,
+              mortgageeWitness,
+              Borrower,
+              Mortgagee,
+              Mortgagor,
+              mortgagorSign: value,
+              mortgagorWitness,
+              borrowerSign,
             };
             const result = onChange(modelFields);
-            value = result?.propertyAddress ?? value;
+            value = result?.mortgagorSign ?? value;
           }
-          if (errors.propertyAddress?.hasError) {
-            runValidationTasks("propertyAddress", value);
+          if (errors.mortgagorSign?.hasError) {
+            runValidationTasks("mortgagorSign", value);
           }
-          setPropertyAddress(value);
+          setMortgagorSign(value);
         }}
-        onBlur={() => runValidationTasks("propertyAddress", propertyAddress)}
-        errorMessage={errors.propertyAddress?.errorMessage}
-        hasError={errors.propertyAddress?.hasError}
-        {...getOverrideProps(overrides, "propertyAddress")}
+        onBlur={() => runValidationTasks("mortgagorSign", mortgagorSign)}
+        errorMessage={errors.mortgagorSign?.errorMessage}
+        hasError={errors.mortgagorSign?.hasError}
+        {...getOverrideProps(overrides, "mortgagorSign")}
+      ></TextField>
+      <TextField
+        label="Mortgagor witness"
+        isRequired={false}
+        isReadOnly={false}
+        value={mortgagorWitness}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              instrumentNo,
+              registeredBy,
+              registeredOn,
+              titleType,
+              titleVol,
+              titleFol,
+              lotNo,
+              extent,
+              propertyAddress,
+              dateOfInstrument,
+              covenantsAndConditions,
+              priorEncumberances,
+              borrowerWitness,
+              mortgageeSign,
+              mortgageeWitness,
+              Borrower,
+              Mortgagee,
+              Mortgagor,
+              mortgagorSign,
+              mortgagorWitness: value,
+              borrowerSign,
+            };
+            const result = onChange(modelFields);
+            value = result?.mortgagorWitness ?? value;
+          }
+          if (errors.mortgagorWitness?.hasError) {
+            runValidationTasks("mortgagorWitness", value);
+          }
+          setMortgagorWitness(value);
+        }}
+        onBlur={() => runValidationTasks("mortgagorWitness", mortgagorWitness)}
+        errorMessage={errors.mortgagorWitness?.errorMessage}
+        hasError={errors.mortgagorWitness?.hasError}
+        {...getOverrideProps(overrides, "mortgagorWitness")}
+      ></TextField>
+      <TextField
+        label="Borrower sign"
+        isRequired={false}
+        isReadOnly={false}
+        value={borrowerSign}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              instrumentNo,
+              registeredBy,
+              registeredOn,
+              titleType,
+              titleVol,
+              titleFol,
+              lotNo,
+              extent,
+              propertyAddress,
+              dateOfInstrument,
+              covenantsAndConditions,
+              priorEncumberances,
+              borrowerWitness,
+              mortgageeSign,
+              mortgageeWitness,
+              Borrower,
+              Mortgagee,
+              Mortgagor,
+              mortgagorSign,
+              mortgagorWitness,
+              borrowerSign: value,
+            };
+            const result = onChange(modelFields);
+            value = result?.borrowerSign ?? value;
+          }
+          if (errors.borrowerSign?.hasError) {
+            runValidationTasks("borrowerSign", value);
+          }
+          setBorrowerSign(value);
+        }}
+        onBlur={() => runValidationTasks("borrowerSign", borrowerSign)}
+        errorMessage={errors.borrowerSign?.errorMessage}
+        hasError={errors.borrowerSign?.hasError}
+        {...getOverrideProps(overrides, "borrowerSign")}
       ></TextField>
       <Flex
         justifyContent="space-between"
         {...getOverrideProps(overrides, "CTAFlex")}
       >
         <Button
-          children="Clear"
+          children="Reset"
           type="reset"
           onClick={(event) => {
             event.preventDefault();
             resetStateValues();
           }}
-          {...getOverrideProps(overrides, "ClearButton")}
+          isDisabled={!(idProp || mortgageModelProp)}
+          {...getOverrideProps(overrides, "ResetButton")}
         ></Button>
         <Flex
           gap="15px"
@@ -1156,7 +1738,10 @@ export default function MortgageApplication(props) {
             children="Submit"
             type="submit"
             variation="primary"
-            isDisabled={Object.values(errors).some((e) => e?.hasError)}
+            isDisabled={
+              !(idProp || mortgageModelProp) ||
+              Object.values(errors).some((e) => e?.hasError)
+            }
             {...getOverrideProps(overrides, "SubmitButton")}
           ></Button>
         </Flex>
