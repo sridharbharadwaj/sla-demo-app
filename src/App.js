@@ -1,8 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
-import {
-  MortgageApplication 
- } from './ui-components';
+import { MortgageApplication } from './ui-components';
+import { withAuthenticator } from '@aws-amplify/cli';
 
 function App() {
   return (    
@@ -12,4 +11,4 @@ function App() {
   );
 }
 
-export default App;
+export default withAuthenticator (App);
