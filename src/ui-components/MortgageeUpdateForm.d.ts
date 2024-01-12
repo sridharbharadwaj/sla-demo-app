@@ -27,6 +27,7 @@ export declare type MortgageeUpdateFormInputValues = {
     citizenship?: string;
     placeOfCorporation?: string;
     address?: string;
+    nric?: string;
 };
 export declare type MortgageeUpdateFormValidationValues = {
     coRegNo?: ValidationFunction<string>;
@@ -34,6 +35,7 @@ export declare type MortgageeUpdateFormValidationValues = {
     citizenship?: ValidationFunction<string>;
     placeOfCorporation?: ValidationFunction<string>;
     address?: ValidationFunction<string>;
+    nric?: ValidationFunction<string>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type MortgageeUpdateFormOverridesProps = {
@@ -43,6 +45,7 @@ export declare type MortgageeUpdateFormOverridesProps = {
     citizenship?: PrimitiveOverrideProps<TextFieldProps>;
     placeOfCorporation?: PrimitiveOverrideProps<TextFieldProps>;
     address?: PrimitiveOverrideProps<TextFieldProps>;
+    nric?: PrimitiveOverrideProps<TextFieldProps>;
 } & EscapeHatchProps;
 export declare type MortgageeUpdateFormProps = React.PropsWithChildren<{
     overrides?: MortgageeUpdateFormOverridesProps | undefined | null;

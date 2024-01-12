@@ -23,29 +23,29 @@ export declare type ValidationResponse = {
 export declare type ValidationFunction<T> = (value: T, validationResponse: ValidationResponse) => ValidationResponse | Promise<ValidationResponse>;
 export declare type NewForm1InputValues = {
     nric?: string;
-    name?: string;
     coRegNo?: string;
     citizenship?: string;
     placeOfCorporation?: string;
     address?: string;
+    name?: string;
 };
 export declare type NewForm1ValidationValues = {
     nric?: ValidationFunction<string>;
-    name?: ValidationFunction<string>;
     coRegNo?: ValidationFunction<string>;
     citizenship?: ValidationFunction<string>;
     placeOfCorporation?: ValidationFunction<string>;
     address?: ValidationFunction<string>;
+    name?: ValidationFunction<string>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type NewForm1OverridesProps = {
     NewForm1Grid?: PrimitiveOverrideProps<GridProps>;
     nric?: PrimitiveOverrideProps<SelectFieldProps>;
-    name?: PrimitiveOverrideProps<TextFieldProps>;
     coRegNo?: PrimitiveOverrideProps<TextFieldProps>;
     citizenship?: PrimitiveOverrideProps<TextFieldProps>;
     placeOfCorporation?: PrimitiveOverrideProps<TextFieldProps>;
     address?: PrimitiveOverrideProps<TextFieldProps>;
+    name?: PrimitiveOverrideProps<TextFieldProps>;
 } & EscapeHatchProps;
 export declare type NewForm1Props = React.PropsWithChildren<{
     overrides?: NewForm1OverridesProps | undefined | null;

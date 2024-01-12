@@ -30,6 +30,7 @@ export default function MortgagorUpdateForm(props) {
     citizenship: "",
     placeOfCorporation: "",
     address: "",
+    nric: "",
   };
   const [coRegNo, setCoRegNo] = React.useState(initialValues.coRegNo);
   const [name, setName] = React.useState(initialValues.name);
@@ -40,6 +41,7 @@ export default function MortgagorUpdateForm(props) {
     initialValues.placeOfCorporation
   );
   const [address, setAddress] = React.useState(initialValues.address);
+  const [nric, setNric] = React.useState(initialValues.nric);
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
     const cleanValues = mortgagorRecord
@@ -50,6 +52,7 @@ export default function MortgagorUpdateForm(props) {
     setCitizenship(cleanValues.citizenship);
     setPlaceOfCorporation(cleanValues.placeOfCorporation);
     setAddress(cleanValues.address);
+    setNric(cleanValues.nric);
     setErrors({});
   };
   const [mortgagorRecord, setMortgagorRecord] =
@@ -75,6 +78,7 @@ export default function MortgagorUpdateForm(props) {
     citizenship: [],
     placeOfCorporation: [],
     address: [],
+    nric: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -107,6 +111,7 @@ export default function MortgagorUpdateForm(props) {
           citizenship: citizenship ?? null,
           placeOfCorporation: placeOfCorporation ?? null,
           address: address ?? null,
+          nric: nric ?? null,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -172,6 +177,7 @@ export default function MortgagorUpdateForm(props) {
               citizenship,
               placeOfCorporation,
               address,
+              nric,
             };
             const result = onChange(modelFields);
             value = result?.coRegNo ?? value;
@@ -200,6 +206,7 @@ export default function MortgagorUpdateForm(props) {
               citizenship,
               placeOfCorporation,
               address,
+              nric,
             };
             const result = onChange(modelFields);
             value = result?.name ?? value;
@@ -228,6 +235,7 @@ export default function MortgagorUpdateForm(props) {
               citizenship: value,
               placeOfCorporation,
               address,
+              nric,
             };
             const result = onChange(modelFields);
             value = result?.citizenship ?? value;
@@ -256,6 +264,7 @@ export default function MortgagorUpdateForm(props) {
               citizenship,
               placeOfCorporation: value,
               address,
+              nric,
             };
             const result = onChange(modelFields);
             value = result?.placeOfCorporation ?? value;
@@ -286,6 +295,7 @@ export default function MortgagorUpdateForm(props) {
               citizenship,
               placeOfCorporation,
               address: value,
+              nric,
             };
             const result = onChange(modelFields);
             value = result?.address ?? value;
@@ -299,6 +309,35 @@ export default function MortgagorUpdateForm(props) {
         errorMessage={errors.address?.errorMessage}
         hasError={errors.address?.hasError}
         {...getOverrideProps(overrides, "address")}
+      ></TextField>
+      <TextField
+        label="Nric"
+        isRequired={false}
+        isReadOnly={false}
+        value={nric}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              coRegNo,
+              name,
+              citizenship,
+              placeOfCorporation,
+              address,
+              nric: value,
+            };
+            const result = onChange(modelFields);
+            value = result?.nric ?? value;
+          }
+          if (errors.nric?.hasError) {
+            runValidationTasks("nric", value);
+          }
+          setNric(value);
+        }}
+        onBlur={() => runValidationTasks("nric", nric)}
+        errorMessage={errors.nric?.errorMessage}
+        hasError={errors.nric?.hasError}
+        {...getOverrideProps(overrides, "nric")}
       ></TextField>
       <Flex
         justifyContent="space-between"

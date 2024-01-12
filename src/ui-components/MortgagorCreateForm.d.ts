@@ -27,6 +27,7 @@ export declare type MortgagorCreateFormInputValues = {
     citizenship?: string;
     placeOfCorporation?: string;
     address?: string;
+    nric?: string;
 };
 export declare type MortgagorCreateFormValidationValues = {
     coRegNo?: ValidationFunction<string>;
@@ -34,6 +35,7 @@ export declare type MortgagorCreateFormValidationValues = {
     citizenship?: ValidationFunction<string>;
     placeOfCorporation?: ValidationFunction<string>;
     address?: ValidationFunction<string>;
+    nric?: ValidationFunction<string>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type MortgagorCreateFormOverridesProps = {
@@ -43,6 +45,7 @@ export declare type MortgagorCreateFormOverridesProps = {
     citizenship?: PrimitiveOverrideProps<TextFieldProps>;
     placeOfCorporation?: PrimitiveOverrideProps<TextFieldProps>;
     address?: PrimitiveOverrideProps<TextFieldProps>;
+    nric?: PrimitiveOverrideProps<TextFieldProps>;
 } & EscapeHatchProps;
 export declare type MortgagorCreateFormProps = React.PropsWithChildren<{
     overrides?: MortgagorCreateFormOverridesProps | undefined | null;

@@ -30,14 +30,13 @@ export default function NewForm1(props) {
   } = props;
   const initialValues = {
     nric: "",
-    name: "",
     coRegNo: "",
     citizenship: "",
     placeOfCorporation: "",
     address: "",
+    name: "",
   };
   const [nric, setNric] = React.useState(initialValues.nric);
-  const [name, setName] = React.useState(initialValues.name);
   const [coRegNo, setCoRegNo] = React.useState(initialValues.coRegNo);
   const [citizenship, setCitizenship] = React.useState(
     initialValues.citizenship
@@ -46,23 +45,24 @@ export default function NewForm1(props) {
     initialValues.placeOfCorporation
   );
   const [address, setAddress] = React.useState(initialValues.address);
+  const [name, setName] = React.useState(initialValues.name);
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
     setNric(initialValues.nric);
-    setName(initialValues.name);
     setCoRegNo(initialValues.coRegNo);
     setCitizenship(initialValues.citizenship);
     setPlaceOfCorporation(initialValues.placeOfCorporation);
     setAddress(initialValues.address);
+    setName(initialValues.name);
     setErrors({});
   };
   const validations = {
     nric: [],
-    name: [],
     coRegNo: [],
     citizenship: [],
     placeOfCorporation: [],
     address: [],
+    name: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -91,11 +91,11 @@ export default function NewForm1(props) {
         event.preventDefault();
         let modelFields = {
           nric,
-          name,
           coRegNo,
           citizenship,
           placeOfCorporation,
           address,
+          name,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -125,18 +125,11 @@ export default function NewForm1(props) {
               modelFields[key] = null;
             }
           });
-          const modelFieldsToSave = {
-            name: modelFields.name,
-            coRegNo: modelFields.coRegNo,
-            citizenship: modelFields.citizenship,
-            placeOfCorporation: modelFields.placeOfCorporation,
-            address: modelFields.address,
-          };
           await client.graphql({
             query: createBorrower.replaceAll("__typename", ""),
             variables: {
               input: {
-                ...modelFieldsToSave,
+                ...modelFields,
               },
             },
           });
@@ -183,19 +176,20 @@ export default function NewForm1(props) {
         </Flex>
       </Flex>
       <SelectField
-        label="Label"
+        label="Nric"
         placeholder="Please select an option"
+        isDisabled={false}
         value={nric}
         onChange={(e) => {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
               nric: value,
-              name,
               coRegNo,
               citizenship,
               placeOfCorporation,
               address,
+              name,
             };
             const result = onChange(modelFields);
             value = result?.nric ?? value;
@@ -211,35 +205,6 @@ export default function NewForm1(props) {
         {...getOverrideProps(overrides, "nric")}
       ></SelectField>
       <TextField
-        label="Name"
-        isRequired={false}
-        isReadOnly={false}
-        value={name}
-        onChange={(e) => {
-          let { value } = e.target;
-          if (onChange) {
-            const modelFields = {
-              nric,
-              name: value,
-              coRegNo,
-              citizenship,
-              placeOfCorporation,
-              address,
-            };
-            const result = onChange(modelFields);
-            value = result?.name ?? value;
-          }
-          if (errors.name?.hasError) {
-            runValidationTasks("name", value);
-          }
-          setName(value);
-        }}
-        onBlur={() => runValidationTasks("name", name)}
-        errorMessage={errors.name?.errorMessage}
-        hasError={errors.name?.hasError}
-        {...getOverrideProps(overrides, "name")}
-      ></TextField>
-      <TextField
         label="Co reg no"
         isRequired={false}
         isReadOnly={false}
@@ -249,11 +214,11 @@ export default function NewForm1(props) {
           if (onChange) {
             const modelFields = {
               nric,
-              name,
               coRegNo: value,
               citizenship,
               placeOfCorporation,
               address,
+              name,
             };
             const result = onChange(modelFields);
             value = result?.coRegNo ?? value;
@@ -278,11 +243,11 @@ export default function NewForm1(props) {
           if (onChange) {
             const modelFields = {
               nric,
-              name,
               coRegNo,
               citizenship: value,
               placeOfCorporation,
               address,
+              name,
             };
             const result = onChange(modelFields);
             value = result?.citizenship ?? value;
@@ -307,11 +272,11 @@ export default function NewForm1(props) {
           if (onChange) {
             const modelFields = {
               nric,
-              name,
               coRegNo,
               citizenship,
               placeOfCorporation: value,
               address,
+              name,
             };
             const result = onChange(modelFields);
             value = result?.placeOfCorporation ?? value;
@@ -338,11 +303,11 @@ export default function NewForm1(props) {
           if (onChange) {
             const modelFields = {
               nric,
-              name,
               coRegNo,
               citizenship,
               placeOfCorporation,
               address: value,
+              name,
             };
             const result = onChange(modelFields);
             value = result?.address ?? value;
@@ -356,6 +321,35 @@ export default function NewForm1(props) {
         errorMessage={errors.address?.errorMessage}
         hasError={errors.address?.hasError}
         {...getOverrideProps(overrides, "address")}
+      ></TextField>
+      <TextField
+        label="Name"
+        isRequired={false}
+        isReadOnly={false}
+        value={name}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              nric,
+              coRegNo,
+              citizenship,
+              placeOfCorporation,
+              address,
+              name: value,
+            };
+            const result = onChange(modelFields);
+            value = result?.name ?? value;
+          }
+          if (errors.name?.hasError) {
+            runValidationTasks("name", value);
+          }
+          setName(value);
+        }}
+        onBlur={() => runValidationTasks("name", name)}
+        errorMessage={errors.name?.errorMessage}
+        hasError={errors.name?.hasError}
+        {...getOverrideProps(overrides, "name")}
       ></TextField>
     </Grid>
   );

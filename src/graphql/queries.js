@@ -27,6 +27,7 @@ export const getMortgage = /* GraphQL */ `
         citizenship
         placeOfCorporation
         address
+        nric
         createdAt
         updatedAt
         __typename
@@ -38,6 +39,7 @@ export const getMortgage = /* GraphQL */ `
         citizenship
         placeOfCorporation
         address
+        nric
         createdAt
         updatedAt
         __typename
@@ -49,6 +51,7 @@ export const getMortgage = /* GraphQL */ `
         citizenship
         placeOfCorporation
         address
+        nric
         createdAt
         updatedAt
         __typename
@@ -113,6 +116,7 @@ export const getMortgagee = /* GraphQL */ `
       citizenship
       placeOfCorporation
       address
+      nric
       createdAt
       updatedAt
       __typename
@@ -133,6 +137,7 @@ export const listMortgagees = /* GraphQL */ `
         citizenship
         placeOfCorporation
         address
+        nric
         createdAt
         updatedAt
         __typename
@@ -151,6 +156,7 @@ export const getBorrower = /* GraphQL */ `
       citizenship
       placeOfCorporation
       address
+      nric
       createdAt
       updatedAt
       __typename
@@ -171,6 +177,7 @@ export const listBorrowers = /* GraphQL */ `
         citizenship
         placeOfCorporation
         address
+        nric
         createdAt
         updatedAt
         __typename
@@ -189,6 +196,7 @@ export const getMortgagor = /* GraphQL */ `
       citizenship
       placeOfCorporation
       address
+      nric
       createdAt
       updatedAt
       __typename
@@ -209,6 +217,7 @@ export const listMortgagors = /* GraphQL */ `
         citizenship
         placeOfCorporation
         address
+        nric
         createdAt
         updatedAt
         __typename

@@ -27,6 +27,7 @@ export const onCreateMortgage = /* GraphQL */ `
         citizenship
         placeOfCorporation
         address
+        nric
         createdAt
         updatedAt
         __typename
@@ -38,6 +39,7 @@ export const onCreateMortgage = /* GraphQL */ `
         citizenship
         placeOfCorporation
         address
+        nric
         createdAt
         updatedAt
         __typename
@@ -49,6 +51,7 @@ export const onCreateMortgage = /* GraphQL */ `
         citizenship
         placeOfCorporation
         address
+        nric
         createdAt
         updatedAt
         __typename
@@ -91,6 +94,7 @@ export const onUpdateMortgage = /* GraphQL */ `
         citizenship
         placeOfCorporation
         address
+        nric
         createdAt
         updatedAt
         __typename
@@ -102,6 +106,7 @@ export const onUpdateMortgage = /* GraphQL */ `
         citizenship
         placeOfCorporation
         address
+        nric
         createdAt
         updatedAt
         __typename
@@ -113,6 +118,7 @@ export const onUpdateMortgage = /* GraphQL */ `
         citizenship
         placeOfCorporation
         address
+        nric
         createdAt
         updatedAt
         __typename
@@ -155,6 +161,7 @@ export const onDeleteMortgage = /* GraphQL */ `
         citizenship
         placeOfCorporation
         address
+        nric
         createdAt
         updatedAt
         __typename
@@ -166,6 +173,7 @@ export const onDeleteMortgage = /* GraphQL */ `
         citizenship
         placeOfCorporation
         address
+        nric
         createdAt
         updatedAt
         __typename
@@ -177,6 +185,7 @@ export const onDeleteMortgage = /* GraphQL */ `
         citizenship
         placeOfCorporation
         address
+        nric
         createdAt
         updatedAt
         __typename
@@ -204,6 +213,7 @@ export const onCreateMortgagee = /* GraphQL */ `
       citizenship
       placeOfCorporation
       address
+      nric
       createdAt
       updatedAt
       __typename
@@ -221,6 +231,7 @@ export const onUpdateMortgagee = /* GraphQL */ `
       citizenship
       placeOfCorporation
       address
+      nric
       createdAt
       updatedAt
       __typename
@@ -238,6 +249,7 @@ export const onDeleteMortgagee = /* GraphQL */ `
       citizenship
       placeOfCorporation
       address
+      nric
       createdAt
       updatedAt
       __typename
@@ -253,6 +265,7 @@ export const onCreateBorrower = /* GraphQL */ `
       citizenship
       placeOfCorporation
       address
+      nric
       createdAt
       updatedAt
       __typename
@@ -268,6 +281,7 @@ export const onUpdateBorrower = /* GraphQL */ `
       citizenship
       placeOfCorporation
       address
+      nric
       createdAt
       updatedAt
       __typename
@@ -283,6 +297,7 @@ export const onDeleteBorrower = /* GraphQL */ `
       citizenship
       placeOfCorporation
       address
+      nric
       createdAt
       updatedAt
       __typename
@@ -300,6 +315,7 @@ export const onCreateMortgagor = /* GraphQL */ `
       citizenship
       placeOfCorporation
       address
+      nric
       createdAt
       updatedAt
       __typename
@@ -317,6 +333,7 @@ export const onUpdateMortgagor = /* GraphQL */ `
       citizenship
       placeOfCorporation
       address
+      nric
       createdAt
       updatedAt
       __typename
@@ -334,6 +351,7 @@ export const onDeleteMortgagor = /* GraphQL */ `
       citizenship
       placeOfCorporation
       address
+      nric
       createdAt
       updatedAt
       __typename

@@ -91,6 +91,7 @@ type EagerMortgagee = {
   readonly citizenship?: string | null;
   readonly placeOfCorporation?: string | null;
   readonly address?: string | null;
+  readonly nric?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -106,6 +107,7 @@ type LazyMortgagee = {
   readonly citizenship?: string | null;
   readonly placeOfCorporation?: string | null;
   readonly address?: string | null;
+  readonly nric?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -127,6 +129,7 @@ type EagerBorrower = {
   readonly citizenship?: string | null;
   readonly placeOfCorporation?: string | null;
   readonly address?: string | null;
+  readonly nric?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -142,6 +145,7 @@ type LazyBorrower = {
   readonly citizenship?: string | null;
   readonly placeOfCorporation?: string | null;
   readonly address?: string | null;
+  readonly nric?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -163,6 +167,7 @@ type EagerMortgagor = {
   readonly citizenship?: string | null;
   readonly placeOfCorporation?: string | null;
   readonly address?: string | null;
+  readonly nric?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -178,6 +183,7 @@ type LazyMortgagor = {
   readonly citizenship?: string | null;
   readonly placeOfCorporation?: string | null;
   readonly address?: string | null;
+  readonly nric?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }

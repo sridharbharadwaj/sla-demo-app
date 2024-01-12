@@ -146,19 +146,12 @@ export default function NewForm2(props) {
               modelFields[key] = null;
             }
           });
-          const modelFieldsToSave = {
-            coRegNo: modelFields.coRegNo ?? null,
-            name: modelFields.name ?? null,
-            citizenship: modelFields.citizenship ?? null,
-            placeOfCorporation: modelFields.placeOfCorporation ?? null,
-            address: modelFields.address ?? null,
-          };
           await client.graphql({
             query: updateBorrower.replaceAll("__typename", ""),
             variables: {
               input: {
                 id: borrowerRecord.id,
-                ...modelFieldsToSave,
+                ...modelFields,
               },
             },
           });
@@ -176,8 +169,9 @@ export default function NewForm2(props) {
       {...rest}
     >
       <SelectField
-        label="Label"
+        label="Nric"
         placeholder="Please select an option"
+        isDisabled={false}
         value={nric}
         onChange={(e) => {
           let { value } = e.target;

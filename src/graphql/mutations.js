@@ -30,6 +30,7 @@ export const createMortgage = /* GraphQL */ `
         citizenship
         placeOfCorporation
         address
+        nric
         createdAt
         updatedAt
         __typename
@@ -41,6 +42,7 @@ export const createMortgage = /* GraphQL */ `
         citizenship
         placeOfCorporation
         address
+        nric
         createdAt
         updatedAt
         __typename
@@ -52,6 +54,7 @@ export const createMortgage = /* GraphQL */ `
         citizenship
         placeOfCorporation
         address
+        nric
         createdAt
         updatedAt
         __typename
@@ -97,6 +100,7 @@ export const updateMortgage = /* GraphQL */ `
         citizenship
         placeOfCorporation
         address
+        nric
         createdAt
         updatedAt
         __typename
@@ -108,6 +112,7 @@ export const updateMortgage = /* GraphQL */ `
         citizenship
         placeOfCorporation
         address
+        nric
         createdAt
         updatedAt
         __typename
@@ -119,6 +124,7 @@ export const updateMortgage = /* GraphQL */ `
         citizenship
         placeOfCorporation
         address
+        nric
         createdAt
         updatedAt
         __typename
@@ -164,6 +170,7 @@ export const deleteMortgage = /* GraphQL */ `
         citizenship
         placeOfCorporation
         address
+        nric
         createdAt
         updatedAt
         __typename
@@ -175,6 +182,7 @@ export const deleteMortgage = /* GraphQL */ `
         citizenship
         placeOfCorporation
         address
+        nric
         createdAt
         updatedAt
         __typename
@@ -186,6 +194,7 @@ export const deleteMortgage = /* GraphQL */ `
         citizenship
         placeOfCorporation
         address
+        nric
         createdAt
         updatedAt
         __typename
@@ -214,6 +223,7 @@ export const createMortgagee = /* GraphQL */ `
       citizenship
       placeOfCorporation
       address
+      nric
       createdAt
       updatedAt
       __typename
@@ -232,6 +242,7 @@ export const updateMortgagee = /* GraphQL */ `
       citizenship
       placeOfCorporation
       address
+      nric
       createdAt
       updatedAt
       __typename
@@ -250,6 +261,7 @@ export const deleteMortgagee = /* GraphQL */ `
       citizenship
       placeOfCorporation
       address
+      nric
       createdAt
       updatedAt
       __typename
@@ -268,6 +280,7 @@ export const createBorrower = /* GraphQL */ `
       citizenship
       placeOfCorporation
       address
+      nric
       createdAt
       updatedAt
       __typename
@@ -286,6 +299,7 @@ export const updateBorrower = /* GraphQL */ `
       citizenship
       placeOfCorporation
       address
+      nric
       createdAt
       updatedAt
       __typename
@@ -304,6 +318,7 @@ export const deleteBorrower = /* GraphQL */ `
       citizenship
       placeOfCorporation
       address
+      nric
       createdAt
       updatedAt
       __typename
@@ -322,6 +337,7 @@ export const createMortgagor = /* GraphQL */ `
       citizenship
       placeOfCorporation
       address
+      nric
       createdAt
       updatedAt
       __typename
@@ -340,6 +356,7 @@ export const updateMortgagor = /* GraphQL */ `
       citizenship
       placeOfCorporation
       address
+      nric
       createdAt
       updatedAt
       __typename
@@ -358,6 +375,7 @@ export const deleteMortgagor = /* GraphQL */ `
       citizenship
       placeOfCorporation
       address
+      nric
       createdAt
       updatedAt
       __typename
