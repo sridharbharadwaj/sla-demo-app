@@ -78,7 +78,7 @@ export default function MortgagorUpdateForm(props) {
     citizenship: [],
     placeOfCorporation: [],
     address: [],
-    nric: [{ type: "Required" }],
+    nric: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -111,7 +111,7 @@ export default function MortgagorUpdateForm(props) {
           citizenship: citizenship ?? null,
           placeOfCorporation: placeOfCorporation ?? null,
           address: address ?? null,
-          nric,
+          nric: nric ?? null,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -312,7 +312,7 @@ export default function MortgagorUpdateForm(props) {
       ></TextField>
       <TextField
         label="Nric"
-        isRequired={true}
+        isRequired={false}
         isReadOnly={false}
         value={nric}
         onChange={(e) => {

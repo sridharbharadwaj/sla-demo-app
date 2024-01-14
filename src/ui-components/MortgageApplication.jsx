@@ -16,6 +16,7 @@ import {
   Heading,
   Icon,
   ScrollView,
+  SelectField,
   Text,
   TextField,
   useTheme,
@@ -294,9 +295,9 @@ export default function MortgageApplication(props) {
       : getIDValue.Mortgagor?.(Mortgagor)
   );
   const getDisplayValue = {
-    Borrower: (r) => `${r?.id}${" - "}${r?.name}`,
-    Mortgagee: (r) => `${r?.id}${" - "}${r?.name}`,
-    Mortgagor: (r) => `${r?.id}${" - "}${r?.name}`,
+    Borrower: (r) => `${r?.name}${" - "}${r?.nric}`,
+    Mortgagee: (r) => `${r?.name}${" - "}${r?.nric}`,
+    Mortgagor: (r) => `${r?.name}${" - "}${r?.nric}`,
   };
   const validations = {
     titleType: [],
@@ -304,10 +305,16 @@ export default function MortgageApplication(props) {
     titleFol: [],
     priorEncumberances: [],
     covenantsAndConditions: [],
-    dateOfInstrument: [],
-    Borrower: [],
-    Mortgagee: [],
-    Mortgagor: [],
+    dateOfInstrument: [{ type: "Required" }],
+    Borrower: [
+      { type: "Required", validationMessage: "Borrower is required." },
+    ],
+    Mortgagee: [
+      { type: "Required", validationMessage: "Mortgagee is required." },
+    ],
+    Mortgagor: [
+      { type: "Required", validationMessage: "Mortgagor is required." },
+    ],
     lotNo: [],
     extent: [],
     propertyAddress: [],
@@ -337,7 +344,7 @@ export default function MortgageApplication(props) {
       const variables = {
         limit: autocompleteLength * 5,
         filter: {
-          or: [{ id: { contains: value } }, { name: { contains: value } }],
+          or: [{ name: { contains: value } }, { nric: { contains: value } }],
         },
       };
       if (newNext) {
@@ -366,7 +373,7 @@ export default function MortgageApplication(props) {
       const variables = {
         limit: autocompleteLength * 5,
         filter: {
-          or: [{ id: { contains: value } }, { name: { contains: value } }],
+          or: [{ name: { contains: value } }, { nric: { contains: value } }],
         },
       };
       if (newNext) {
@@ -395,7 +402,7 @@ export default function MortgageApplication(props) {
       const variables = {
         limit: autocompleteLength * 5,
         filter: {
-          or: [{ id: { contains: value } }, { name: { contains: value } }],
+          or: [{ name: { contains: value } }, { nric: { contains: value } }],
         },
       };
       if (newNext) {
@@ -545,10 +552,10 @@ export default function MortgageApplication(props) {
         children="Description of Land"
         {...getOverrideProps(overrides, "SectionalElement4")}
       ></Heading>
-      <TextField
+      <SelectField
         label="Title Type"
-        isRequired={false}
-        isReadOnly={false}
+        placeholder="Please select an option"
+        isDisabled={false}
         value={titleType}
         onChange={(e) => {
           let { value } = e.target;
@@ -579,7 +586,48 @@ export default function MortgageApplication(props) {
         errorMessage={errors.titleType?.errorMessage}
         hasError={errors.titleType?.hasError}
         {...getOverrideProps(overrides, "titleType")}
-      ></TextField>
+      >
+        <option
+          children="Joint Tenancy"
+          value="Joint Tenancy"
+          {...getOverrideProps(overrides, "titleTypeoption0")}
+        ></option>
+        <option
+          children="Tenancy In Common (TIC)"
+          value="Tenancy In Common (TIC)"
+          {...getOverrideProps(overrides, "titleTypeoption1")}
+        ></option>
+        <option
+          children="Tenants by Entirety (TBE)"
+          value="Tenants by Entirety (TBE)"
+          {...getOverrideProps(overrides, "titleTypeoption2")}
+        ></option>
+        <option
+          children="Sole Ownership"
+          value="Sole Ownership"
+          {...getOverrideProps(overrides, "titleTypeoption3")}
+        ></option>
+        <option
+          children="Community Property"
+          value="Community Property"
+          {...getOverrideProps(overrides, "titleTypeoption4")}
+        ></option>
+        <option
+          children="Green Title"
+          value="Green Title"
+          {...getOverrideProps(overrides, "titleTypeoption5")}
+        ></option>
+        <option
+          children="Purple Title"
+          value="Purple Title"
+          {...getOverrideProps(overrides, "titleTypeoption6")}
+        ></option>
+        <option
+          children="Strata Title"
+          value="Strata Title"
+          {...getOverrideProps(overrides, "titleTypeoption7")}
+        ></option>
+      </SelectField>
       <TextField
         label="Title Vol"
         isRequired={false}
@@ -726,7 +774,7 @@ export default function MortgageApplication(props) {
       ></TextField>
       <TextField
         label="Date of instrument"
-        isRequired={false}
+        isRequired={true}
         isReadOnly={false}
         type="date"
         value={dateOfInstrument}
@@ -806,7 +854,7 @@ export default function MortgageApplication(props) {
       >
         <Autocomplete
           label="Borrower"
-          isRequired={false}
+          isRequired={true}
           isReadOnly={false}
           placeholder="Search Borrower"
           value={currentBorrowerDisplayValue}
@@ -896,7 +944,7 @@ export default function MortgageApplication(props) {
       >
         <Autocomplete
           label="Mortgagee"
-          isRequired={false}
+          isRequired={true}
           isReadOnly={false}
           placeholder="Search Mortgagee"
           value={currentMortgageeDisplayValue}
@@ -986,7 +1034,7 @@ export default function MortgageApplication(props) {
       >
         <Autocomplete
           label="Mortgagor"
-          isRequired={false}
+          isRequired={true}
           isReadOnly={false}
           placeholder="Search Mortgagor"
           value={currentMortgagorDisplayValue}

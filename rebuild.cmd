@@ -1,0 +1,1 @@
+curl -X POST -d {} "https://webhooks.amplify.ap-southeast-1.amazonaws.com/prod/webhooks?id=78958e34-f6d5-431f-89bc-460be56475ac&token=ZpgQj0EvlRM0AG7mSe75dOPwfC3BEAts46tHosyxNE&operation=startbuild" -H "Content-Type:application/json"

@@ -5,6 +5,7 @@ import App from './App';
 
 import '@aws-amplify/ui-react/styles.css'
 import config from './aws-exports'
+
 import { Amplify } from 'aws-amplify';
 
 import { ThemeProvider } from '@aws-amplify/ui-react'

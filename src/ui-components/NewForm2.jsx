@@ -6,16 +6,22 @@
 
 /* eslint-disable */
 import * as React from "react";
-import { Button, Flex, Grid, TextField } from "@aws-amplify/ui-react";
+import {
+  Button,
+  Flex,
+  Grid,
+  SelectField,
+  TextField,
+} from "@aws-amplify/ui-react";
 import { fetchByPath, getOverrideProps, validateField } from "./utils";
 import { generateClient } from "aws-amplify/api";
-import { getMortgagee } from "../graphql/queries";
-import { updateMortgagee } from "../graphql/mutations";
+import { getBorrower } from "../graphql/queries";
+import { updateBorrower } from "../graphql/mutations";
 const client = generateClient();
-export default function MortgageeUpdateForm(props) {
+export default function NewForm2(props) {
   const {
     id: idProp,
-    mortgagee: mortgageeModelProp,
+    borrower: borrowerModelProp,
     onSuccess,
     onError,
     onSubmit,
@@ -25,13 +31,14 @@ export default function MortgageeUpdateForm(props) {
     ...rest
   } = props;
   const initialValues = {
+    nric: "",
     coRegNo: "",
     name: "",
     citizenship: "",
     placeOfCorporation: "",
     address: "",
-    nric: "",
   };
+  const [nric, setNric] = React.useState(initialValues.nric);
   const [coRegNo, setCoRegNo] = React.useState(initialValues.coRegNo);
   const [name, setName] = React.useState(initialValues.name);
   const [citizenship, setCitizenship] = React.useState(
@@ -41,44 +48,42 @@ export default function MortgageeUpdateForm(props) {
     initialValues.placeOfCorporation
   );
   const [address, setAddress] = React.useState(initialValues.address);
-  const [nric, setNric] = React.useState(initialValues.nric);
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
-    const cleanValues = mortgageeRecord
-      ? { ...initialValues, ...mortgageeRecord }
+    const cleanValues = borrowerRecord
+      ? { ...initialValues, ...borrowerRecord }
       : initialValues;
+    setNric(cleanValues.nric);
     setCoRegNo(cleanValues.coRegNo);
     setName(cleanValues.name);
     setCitizenship(cleanValues.citizenship);
     setPlaceOfCorporation(cleanValues.placeOfCorporation);
     setAddress(cleanValues.address);
-    setNric(cleanValues.nric);
     setErrors({});
   };
-  const [mortgageeRecord, setMortgageeRecord] =
-    React.useState(mortgageeModelProp);
+  const [borrowerRecord, setBorrowerRecord] = React.useState(borrowerModelProp);
   React.useEffect(() => {
     const queryData = async () => {
       const record = idProp
         ? (
             await client.graphql({
-              query: getMortgagee.replaceAll("__typename", ""),
+              query: getBorrower.replaceAll("__typename", ""),
               variables: { id: idProp },
             })
-          )?.data?.getMortgagee
-        : mortgageeModelProp;
-      setMortgageeRecord(record);
+          )?.data?.getBorrower
+        : borrowerModelProp;
+      setBorrowerRecord(record);
     };
     queryData();
-  }, [idProp, mortgageeModelProp]);
-  React.useEffect(resetStateValues, [mortgageeRecord]);
+  }, [idProp, borrowerModelProp]);
+  React.useEffect(resetStateValues, [borrowerRecord]);
   const validations = {
+    nric: [],
     coRegNo: [],
     name: [],
     citizenship: [],
     placeOfCorporation: [],
     address: [],
-    nric: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -106,12 +111,12 @@ export default function MortgageeUpdateForm(props) {
       onSubmit={async (event) => {
         event.preventDefault();
         let modelFields = {
+          nric: nric ?? null,
           coRegNo: coRegNo ?? null,
           name: name ?? null,
           citizenship: citizenship ?? null,
           placeOfCorporation: placeOfCorporation ?? null,
           address: address ?? null,
-          nric: nric ?? null,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -142,10 +147,10 @@ export default function MortgageeUpdateForm(props) {
             }
           });
           await client.graphql({
-            query: updateMortgagee.replaceAll("__typename", ""),
+            query: updateBorrower.replaceAll("__typename", ""),
             variables: {
               input: {
-                id: mortgageeRecord.id,
+                id: borrowerRecord.id,
                 ...modelFields,
               },
             },
@@ -160,9 +165,38 @@ export default function MortgageeUpdateForm(props) {
           }
         }
       }}
-      {...getOverrideProps(overrides, "MortgageeUpdateForm")}
+      {...getOverrideProps(overrides, "NewForm2")}
       {...rest}
     >
+      <SelectField
+        label="Nric"
+        placeholder="Please select an option"
+        isDisabled={false}
+        value={nric}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              nric: value,
+              coRegNo,
+              name,
+              citizenship,
+              placeOfCorporation,
+              address,
+            };
+            const result = onChange(modelFields);
+            value = result?.nric ?? value;
+          }
+          if (errors.nric?.hasError) {
+            runValidationTasks("nric", value);
+          }
+          setNric(value);
+        }}
+        onBlur={() => runValidationTasks("nric", nric)}
+        errorMessage={errors.nric?.errorMessage}
+        hasError={errors.nric?.hasError}
+        {...getOverrideProps(overrides, "nric")}
+      ></SelectField>
       <TextField
         label="Co reg no"
         isRequired={false}
@@ -172,12 +206,12 @@ export default function MortgageeUpdateForm(props) {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
+              nric,
               coRegNo: value,
               name,
               citizenship,
               placeOfCorporation,
               address,
-              nric,
             };
             const result = onChange(modelFields);
             value = result?.coRegNo ?? value;
@@ -201,12 +235,12 @@ export default function MortgageeUpdateForm(props) {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
+              nric,
               coRegNo,
               name: value,
               citizenship,
               placeOfCorporation,
               address,
-              nric,
             };
             const result = onChange(modelFields);
             value = result?.name ?? value;
@@ -230,12 +264,12 @@ export default function MortgageeUpdateForm(props) {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
+              nric,
               coRegNo,
               name,
               citizenship: value,
               placeOfCorporation,
               address,
-              nric,
             };
             const result = onChange(modelFields);
             value = result?.citizenship ?? value;
@@ -259,12 +293,12 @@ export default function MortgageeUpdateForm(props) {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
+              nric,
               coRegNo,
               name,
               citizenship,
               placeOfCorporation: value,
               address,
-              nric,
             };
             const result = onChange(modelFields);
             value = result?.placeOfCorporation ?? value;
@@ -290,12 +324,12 @@ export default function MortgageeUpdateForm(props) {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
+              nric,
               coRegNo,
               name,
               citizenship,
               placeOfCorporation,
               address: value,
-              nric,
             };
             const result = onChange(modelFields);
             value = result?.address ?? value;
@@ -310,35 +344,6 @@ export default function MortgageeUpdateForm(props) {
         hasError={errors.address?.hasError}
         {...getOverrideProps(overrides, "address")}
       ></TextField>
-      <TextField
-        label="Nric"
-        isRequired={false}
-        isReadOnly={false}
-        value={nric}
-        onChange={(e) => {
-          let { value } = e.target;
-          if (onChange) {
-            const modelFields = {
-              coRegNo,
-              name,
-              citizenship,
-              placeOfCorporation,
-              address,
-              nric: value,
-            };
-            const result = onChange(modelFields);
-            value = result?.nric ?? value;
-          }
-          if (errors.nric?.hasError) {
-            runValidationTasks("nric", value);
-          }
-          setNric(value);
-        }}
-        onBlur={() => runValidationTasks("nric", nric)}
-        errorMessage={errors.nric?.errorMessage}
-        hasError={errors.nric?.hasError}
-        {...getOverrideProps(overrides, "nric")}
-      ></TextField>
       <Flex
         justifyContent="space-between"
         {...getOverrideProps(overrides, "CTAFlex")}
@@ -350,7 +355,7 @@ export default function MortgageeUpdateForm(props) {
             event.preventDefault();
             resetStateValues();
           }}
-          isDisabled={!(idProp || mortgageeModelProp)}
+          isDisabled={!(idProp || borrowerModelProp)}
           {...getOverrideProps(overrides, "ResetButton")}
         ></Button>
         <Flex
@@ -362,7 +367,7 @@ export default function MortgageeUpdateForm(props) {
             type="submit"
             variation="primary"
             isDisabled={
-              !(idProp || mortgageeModelProp) ||
+              !(idProp || borrowerModelProp) ||
               Object.values(errors).some((e) => e?.hasError)
             }
             {...getOverrideProps(overrides, "SubmitButton")}

@@ -56,7 +56,7 @@ export default function MortgagorCreateForm(props) {
     citizenship: [],
     placeOfCorporation: [],
     address: [],
-    nric: [{ type: "Required" }],
+    nric: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -292,7 +292,7 @@ export default function MortgagorCreateForm(props) {
       ></TextField>
       <TextField
         label="Nric"
-        isRequired={true}
+        isRequired={false}
         isReadOnly={false}
         value={nric}
         onChange={(e) => {

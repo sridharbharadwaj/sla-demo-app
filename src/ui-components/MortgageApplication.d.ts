@@ -5,7 +5,7 @@
  **************************************************************************/
 
 import * as React from "react";
-import { AutocompleteProps, DividerProps, GridProps, HeadingProps, TextFieldProps } from "@aws-amplify/ui-react";
+import { AutocompleteProps, DividerProps, GridProps, HeadingProps, SelectFieldProps, TextFieldProps } from "@aws-amplify/ui-react";
 export declare type EscapeHatchProps = {
     [elementHierarchy: string]: Record<string, unknown>;
 } | null;
@@ -58,7 +58,7 @@ export declare type MortgageApplicationOverridesProps = {
     SectionalElement2?: PrimitiveOverrideProps<HeadingProps>;
     SectionalElement5?: PrimitiveOverrideProps<DividerProps>;
     SectionalElement4?: PrimitiveOverrideProps<HeadingProps>;
-    titleType?: PrimitiveOverrideProps<TextFieldProps>;
+    titleType?: PrimitiveOverrideProps<SelectFieldProps>;
     titleVol?: PrimitiveOverrideProps<TextFieldProps>;
     titleFol?: PrimitiveOverrideProps<TextFieldProps>;
     priorEncumberances?: PrimitiveOverrideProps<TextFieldProps>;
