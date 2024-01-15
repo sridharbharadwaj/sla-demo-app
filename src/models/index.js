@@ -4,9 +4,11 @@ import { schema } from './schema';
 
 
 
-const { Mortgage, Mortgagee, Borrower, Mortgagor, LandTitle } = initSchema(schema);
+const { Property, Citizen, Mortgage, Mortgagee, Borrower, Mortgagor, LandTitle } = initSchema(schema);
 
 export {
+  Property,
+  Citizen,
   Mortgage,
   Mortgagee,
   Borrower,

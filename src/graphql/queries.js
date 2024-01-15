@@ -1,6 +1,74 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const getProperty = /* GraphQL */ `
+  query GetProperty($id: ID!) {
+    getProperty(id: $id) {
+      id
+      address
+      ownerNric
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const listProperties = /* GraphQL */ `
+  query ListProperties(
+    $filter: ModelPropertyFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listProperties(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        address
+        ownerNric
+        createdAt
+        updatedAt
+        __typename
+      }
+      nextToken
+      __typename
+    }
+  }
+`;
+export const getCitizen = /* GraphQL */ `
+  query GetCitizen($id: ID!) {
+    getCitizen(id: $id) {
+      id
+      full_name
+      surrname
+      first_name
+      nric
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const listCitizens = /* GraphQL */ `
+  query ListCitizens(
+    $filter: ModelCitizenFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listCitizens(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        full_name
+        surrname
+        first_name
+        nric
+        createdAt
+        updatedAt
+        __typename
+      }
+      nextToken
+      __typename
+    }
+  }
+`;
 export const getMortgage = /* GraphQL */ `
   query GetMortgage($id: ID!) {
     getMortgage(id: $id) {

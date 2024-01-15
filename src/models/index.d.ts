@@ -6,6 +6,70 @@ import { LazyLoading, LazyLoadingDisabled, AsyncItem } from "@aws-amplify/datast
 
 
 
+type EagerProperty = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<Property, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly address?: string | null;
+  readonly ownerNric?: string | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+type LazyProperty = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<Property, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly address?: string | null;
+  readonly ownerNric?: string | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type Property = LazyLoading extends LazyLoadingDisabled ? EagerProperty : LazyProperty
+
+export declare const Property: (new (init: ModelInit<Property>) => Property) & {
+  copyOf(source: Property, mutator: (draft: MutableModel<Property>) => MutableModel<Property> | void): Property;
+}
+
+type EagerCitizen = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<Citizen, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly full_name?: string | null;
+  readonly surrname?: string | null;
+  readonly first_name?: string | null;
+  readonly nric?: string | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+type LazyCitizen = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<Citizen, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly full_name?: string | null;
+  readonly surrname?: string | null;
+  readonly first_name?: string | null;
+  readonly nric?: string | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type Citizen = LazyLoading extends LazyLoadingDisabled ? EagerCitizen : LazyCitizen
+
+export declare const Citizen: (new (init: ModelInit<Citizen>) => Citizen) & {
+  copyOf(source: Citizen, mutator: (draft: MutableModel<Citizen>) => MutableModel<Citizen> | void): Citizen;
+}
+
 type EagerMortgage = {
   readonly [__modelMeta__]: {
     identifier: ManagedIdentifier<Mortgage, 'id'>;

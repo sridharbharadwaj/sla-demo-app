@@ -1,3 +1,17 @@
+type Property @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  address: String
+  ownerNric: String
+}
+
+type Citizen @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  full_name: String
+  surrname: String
+  first_name: String
+  nric: String
+}
+
 type Mortgage @model @auth(rules: [{allow: public}]) {
   id: ID!
   instrumentNo: String
@@ -61,4 +75,5 @@ type LandTitle @model @auth(rules: [{allow: public}]) {
   lotNo: String
   extent: String
   propertyAddr: String
-} 
+}
+ 

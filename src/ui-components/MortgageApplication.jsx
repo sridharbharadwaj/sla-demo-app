@@ -305,7 +305,14 @@ export default function MortgageApplication(props) {
     titleFol: [],
     priorEncumberances: [],
     covenantsAndConditions: [],
-    dateOfInstrument: [{ type: "Required" }],
+    dateOfInstrument: [
+      { type: "Required" },
+      {
+        type: "BeBefore",
+        strValues: ["today"],
+        validationMessage: "The value must be before today",
+      },
+    ],
     Borrower: [
       { type: "Required", validationMessage: "Borrower is required." },
     ],

@@ -22,7 +22,8 @@
         "slademoRuleFunction": {
           "deploymentBucketName": "amplify-slademoapp-staging-25701-deployment",
           "s3Key": "amplify-builds/slademoRuleFunction-6e793478646b32544b6f-build.zip"
-        }
+        },
+        "slademoapp8d1e2077": {}
       },
       "api": {
         "SLADemoApp": {},

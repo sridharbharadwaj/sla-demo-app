@@ -1,6 +1,102 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const createProperty = /* GraphQL */ `
+  mutation CreateProperty(
+    $input: CreatePropertyInput!
+    $condition: ModelPropertyConditionInput
+  ) {
+    createProperty(input: $input, condition: $condition) {
+      id
+      address
+      ownerNric
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const updateProperty = /* GraphQL */ `
+  mutation UpdateProperty(
+    $input: UpdatePropertyInput!
+    $condition: ModelPropertyConditionInput
+  ) {
+    updateProperty(input: $input, condition: $condition) {
+      id
+      address
+      ownerNric
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const deleteProperty = /* GraphQL */ `
+  mutation DeleteProperty(
+    $input: DeletePropertyInput!
+    $condition: ModelPropertyConditionInput
+  ) {
+    deleteProperty(input: $input, condition: $condition) {
+      id
+      address
+      ownerNric
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const createCitizen = /* GraphQL */ `
+  mutation CreateCitizen(
+    $input: CreateCitizenInput!
+    $condition: ModelCitizenConditionInput
+  ) {
+    createCitizen(input: $input, condition: $condition) {
+      id
+      full_name
+      surrname
+      first_name
+      nric
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const updateCitizen = /* GraphQL */ `
+  mutation UpdateCitizen(
+    $input: UpdateCitizenInput!
+    $condition: ModelCitizenConditionInput
+  ) {
+    updateCitizen(input: $input, condition: $condition) {
+      id
+      full_name
+      surrname
+      first_name
+      nric
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const deleteCitizen = /* GraphQL */ `
+  mutation DeleteCitizen(
+    $input: DeleteCitizenInput!
+    $condition: ModelCitizenConditionInput
+  ) {
+    deleteCitizen(input: $input, condition: $condition) {
+      id
+      full_name
+      surrname
+      first_name
+      nric
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
 export const createMortgage = /* GraphQL */ `
   mutation CreateMortgage(
     $input: CreateMortgageInput!
